@@ -1,6 +1,6 @@
 import { createLazyFileRoute } from "@tanstack/react-router";
-import { useOidc, fetchUserAvatar } from "../oidc";
-import { useEffect, useState } from "react";
+import { useOidc } from "../oidc";
+import { useUserAvatar } from "../api/useUserAvatar";
 
 export const Route = createLazyFileRoute("/protected2")({
   component: Page,
@@ -9,14 +9,7 @@ export const Route = createLazyFileRoute("/protected2")({
 function Page() {
   const { decodedIdToken } = useOidc({ assert: "user logged in" });
 
-  const [src, setSrc] = useState<string | null>(null);
-
-  useEffect(() => {
-    (async () => {
-      const photoUrl = await fetchUserAvatar();
-      setSrc(photoUrl);
-    })();
-  }, []);
+  const { data: photoUri, isLoading, isError } = useUserAvatar();
 
   return (
     <>
@@ -24,11 +17,14 @@ function Page() {
         Hello {decodedIdToken.name}, this is a lazy route where authentication
         is enforced (in ./protected.tsx)
       </h3>
-      <img
-        src={src ?? "/default-avatar.png"}
-        alt="User avatar"
-        style={{ width: 200, height: 200, borderRadius: "50%" }}
-      />
+      {isLoading && <div>Loading...</div>}
+      {!isError && photoUri && (
+        <img
+          src={photoUri}
+          alt="User avatar"
+          style={{ width: 200, height: 200, borderRadius: "50%" }}
+        />
+      )}
     </>
   );
 }

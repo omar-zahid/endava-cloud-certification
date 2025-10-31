@@ -76,24 +76,6 @@ export const fetchWithAuth: typeof fetch = async (input, init) => {
   return fetch(input, init);
 };
 
-export async function fetchUserAvatar(): Promise<string | null> {
-  const res = await fetchWithAuth(
-    "https://graph.microsoft.com/v1.0/me/photo/$value",
-  );
-
-  if (res.ok) {
-    const blob = await res.blob();
-    return URL.createObjectURL(blob);
-  }
-
-  if (res.status === 404) {
-    // user has no photo
-    return null;
-  }
-
-  throw new Error(`Failed to fetch photo: ${res.status} ${res.statusText}`);
-}
-
 // Using the mock adapter:
 // To use this, just remove the code above and uncomment the code below.
 // The mock oidc adapter will be enabled if the OIDC_ISSUER environment variable is not set.
