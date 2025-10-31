@@ -1,16 +1,11 @@
-# @tanstack/react-router + oidc-spa + Vite + Keycloak
+# Endava - Cloud Certification
 
-This example setup is deployed here:  
-https://example-tanstack-router.oidc-spa.dev/
+Cloud certification management application
 
-Run locally:
+Local development: 
 
-```bash
-git clone https://github.com/keycloakify/oidc-spa
-cd oidc-spa/examples/tanstack-router
-yarn
-yarn dev
+```sh
+cp .env.local.sample .env.local
+pnpm install
+pnpm dev
 ```
-
-By default this setup uses our [Cloud IAM](https://www.cloud-iam.com/) Keycloak instance.  
-Update the `.env.local` to connect to your authentication server.
