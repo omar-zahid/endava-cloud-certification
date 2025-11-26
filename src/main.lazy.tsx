@@ -7,7 +7,7 @@ import { routeTree } from "./routeTree.gen";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { FluentProvider, webDarkTheme } from "@fluentui/react-components";
 import type { BrandVariants, Theme } from "@fluentui/react-components";
-import { createDarkTheme, createLightTheme } from "@fluentui/react-components";
+import { createDarkTheme } from "@fluentui/react-components";
 
 const router = createRouter({ routeTree });
 const queryClient = new QueryClient();
@@ -29,10 +29,6 @@ const endavabrand: BrandVariants = {
   140: "#FF9E88",
   150: "#FFB5A3",
   160: "#FFCABE",
-};
-
-const lightTheme: Theme = {
-  ...createLightTheme(endavabrand),
 };
 
 const darkTheme: Theme = {
