@@ -1,6 +1,14 @@
-import { Link } from "@tanstack/react-router";
 import { useOidc } from "../oidc";
 import { isKeycloak, createKeycloakUtils } from "oidc-spa/keycloak";
+import {
+  Avatar,
+  Button,
+  Menu,
+  MenuItem,
+  MenuList,
+  MenuPopover,
+  MenuTrigger,
+} from "@fluentui/react-components";
 
 export function Header() {
   const { isUserLoggedIn, initializationError } = useOidc();
@@ -16,7 +24,6 @@ export function Header() {
         width: "100%",
       }}
     >
-      <span>OIDC-SPA + Tanstack-router Starter</span>
       {/* You do not have to display an error here, it's just to show that if you want you can
                 But it's best to enable the user to navigate unauthenticated and to display an error
                 only if he attempt to login (by default it display an alert) */}
@@ -28,31 +35,7 @@ export function Header() {
         </div>
       )}
 
-      <div>
-        <Link to="/">
-          {({ isActive }) => (
-            <span style={{ fontWeight: isActive ? "bold" : "normal" }}>
-              Home
-            </span>
-          )}
-        </Link>
-        &nbsp; &nbsp; &nbsp;
-        <Link to="/protected">
-          {({ isActive }) => (
-            <span style={{ fontWeight: isActive ? "bold" : "normal" }}>
-              My protected page
-            </span>
-          )}
-        </Link>
-        &nbsp; &nbsp; &nbsp;
-        <Link to="/protected2">
-          {({ isActive }) => (
-            <span style={{ fontWeight: isActive ? "bold" : "normal" }}>
-              My protected page 2 (lazy)
-            </span>
-          )}
-        </Link>
-      </div>
+      <div></div>
 
       {isUserLoggedIn ? <LoggedInAuthButton /> : <NotLoggedInAuthButton />}
     </div>
@@ -64,9 +47,28 @@ function LoggedInAuthButton() {
 
   return (
     <div>
-      <span>Hello {decodedIdToken.name}</span>
+      <Menu>
+        <MenuTrigger>
+          <Button appearance="transparent">
+            <Avatar
+              image={{ src: "/profile.jpg" }}
+              name={decodedIdToken.name}
+            />
+            <span>{decodedIdToken.name}</span>
+          </Button>
+        </MenuTrigger>
+
+        <MenuPopover>
+          <MenuList>
+            <MenuItem onClick={() => logout({ redirectTo: "home" })}>
+              Logout
+            </MenuItem>
+          </MenuList>
+        </MenuPopover>
+      </Menu>
+      {/* <span>Hello {decodedIdToken.name}</span>
       &nbsp; &nbsp;
-      <button onClick={() => logout({ redirectTo: "home" })}>Logout</button>
+      <button onClick={() => logout({ redirectTo: "home" })}>Logout</button> */}
     </div>
   );
 }
