@@ -3,12 +3,21 @@ import { isKeycloak, createKeycloakUtils } from "oidc-spa/keycloak";
 import {
   Avatar,
   Button,
+  makeStyles,
   Menu,
   MenuItem,
   MenuList,
   MenuPopover,
   MenuTrigger,
+  tokens,
 } from "@fluentui/react-components";
+import { useUserAvatar } from "../api/useUserAvatar";
+
+const useStyles = makeStyles({
+  displayName: {
+    paddingLeft: tokens.spacingHorizontalL,
+  },
+});
 
 export function Header() {
   const { isUserLoggedIn, initializationError } = useOidc();
@@ -44,17 +53,20 @@ export function Header() {
 
 function LoggedInAuthButton() {
   const { decodedIdToken, logout } = useOidc({ assert: "user logged in" });
+  const { data: avatar } = useUserAvatar();
+  const styles = useStyles();
 
   return (
     <div>
       <Menu>
         <MenuTrigger>
           <Button appearance="transparent">
-            <Avatar
-              image={{ src: "/profile.jpg" }}
-              name={decodedIdToken.name}
-            />
-            <span>{decodedIdToken.name}</span>
+            {typeof avatar === "string" ? (
+              <Avatar image={{ src: avatar }} name={decodedIdToken.name} />
+            ) : (
+              <Avatar name={decodedIdToken.name} />
+            )}
+            <span className={styles.displayName}>{decodedIdToken.name}</span>
           </Button>
         </MenuTrigger>
 
