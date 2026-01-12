@@ -1,16 +1,22 @@
 import {
   AppItem,
+  makeStyles,
   NavDrawer,
   NavDrawerBody,
   NavItem,
 } from "@fluentui/react-components";
-import {
-  Certificate24Color,
-  Certificate20Regular,
-} from "@fluentui/react-icons";
+import { Certificate20Regular } from "@fluentui/react-icons";
+
+const useStyles = makeStyles({
+  brandIcon: {
+    width: "20x",
+    height: "20px",
+  },
+});
 
 export function Nav() {
-  const linkDestination = "";
+  const styles = useStyles();
+  const linkDestination = "/";
   return (
     <NavDrawer
       open={true}
@@ -19,7 +25,12 @@ export function Nav() {
       type="inline"
     >
       <NavDrawerBody>
-        <AppItem icon={<Certificate24Color />} as="a" href={linkDestination}>
+        <AppItem
+          icon={
+            <img src="../public/favicon.ico" className={styles.brandIcon} />
+          }
+          href={linkDestination}
+        >
           Endava Cloud Certification
         </AppItem>
         <NavItem
