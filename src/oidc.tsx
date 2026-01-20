@@ -58,8 +58,6 @@ export const {
     audience: import.meta.env.VITE_OIDC_AUDIENCE || undefined,
     ui_locales: isSilent ? undefined : "en", // Here you would dynamically get the current language at the time of redirecting to the OIDC server
   }),
-  // Remove this in your repo
-  debugLogs: true,
 }));
 
 export const fetchWithAuth: typeof fetch = async (input, init) => {
@@ -75,41 +73,3 @@ export const fetchWithAuth: typeof fetch = async (input, init) => {
 
   return fetch(input, init);
 };
-
-// Using the mock adapter:
-// To use this, just remove the code above and uncomment the code below.
-// The mock oidc adapter will be enabled if the OIDC_ISSUER environment variable is not set.
-/*
-import { createReactOidc } from "oidc-spa/react";
-import { createMockReactOidc } from "oidc-spa/mock/react";
-import { z } from "zod";
-
-const decodedIdTokenSchema = z.object({
-    sub: z.string(),
-    name: z.string()
-});
-
-const autoLogin = false;
-
-export const { OidcProvider, useOidc, getOidc } =
-    !import.meta.env.VITE_OIDC_ISSUER ?
-        createMockReactOidc({
-            homeUrl: import.meta.env.BASE_URL,
-            mockedTokens: {
-                decodedIdToken: {
-                    sub: "123",
-                    name: "John"
-                } satisfies z.infer<typeof decodedIdTokenSchema>
-            },
-            // NOTE: If autoLogin is set to true this option must be removed
-            isUserInitiallyLoggedIn: true,
-            autoLogin
-        }) :
-        createReactOidc({
-            issuerUri: import.meta.env.VITE_OIDC_ISSUER,
-            clientId: import.meta.env.VITE_OIDC_CLIENT_ID,
-            homeUrl: import.meta.env.BASE_URL,
-            decodedIdTokenSchema,
-            autoLogin
-        });
-*/
