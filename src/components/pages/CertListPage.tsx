@@ -2,10 +2,6 @@ import {
   Button,
   Card,
   CardFooter,
-  CardHeader,
-  CardPreview,
-  Link,
-  Tag,
   Text,
   ToggleButton,
   makeStyles,
@@ -15,29 +11,27 @@ import { awsCertifications } from "../../temporary-static-data/aws-certification
 import { useState } from "react";
 import { Certification } from "../../types/Certification";
 import { VENDOR, Vendor } from "../../constants/vendor";
+import { vendorConfig } from "../../constants/vendorConfig";
 
 const useStyles = makeStyles({
-  certListPageGrid: {
-    maxWidth: "1000px",
-    justifyContent: "flex-start",
-    margin: "auto",
-    paddingTop: "40px",
-  },
   certMenuGrid: {
     display: "flex",
     justifyContent: "flex-start ",
     gap: "8px",
   },
 
+  certListPageGrid: {
+    justifyContent: "flex-start",
+    margin: "auto",
+    paddingTop: "40px",
+  },
+
   certCardGrid: {
     display: "grid",
-    gridTemplateColumns: "repeat(auto-fill, 220px)",
-    gap: "20px",
-    padding: "16px",
-    maxWidth: "1000px",
-    justifyItems: "center",
-    width: "100%",
-    justifySelf: "center",
+    gridTemplateColumns: "repeat(auto-fill, 320px)",
+    paddingTop: "16px",
+    width: "1056px",
+    gap: "16px",
     justifyContent: "flex-start",
   },
 
@@ -45,28 +39,21 @@ const useStyles = makeStyles({
     height: "100%",
     display: "flex",
     flexDirection: "column",
-    width: "220px",
-
-    backgroundColor: "rgba(90, 77, 77, 0.06)",
-    backdropFilter: "blur(8px)",
-    WebkitBackdropFilter: "blur(8px)",
-
-    border: "1px solid rgba(255, 255, 255, 0.12)",
-    borderRadius: "16px",
-
-    boxShadow: "0 12px 40px rgba(0, 0, 0, 0.08)",
+    width: "300px",
   },
-
-  preview: {
+  cardTopRow: {
     display: "flex",
-    justifyContent: "center",
     alignItems: "center",
-    padding: "32px",
+    gap: "12px",
+    padding: "4px",
   },
-
+  cardHeader: {
+    minWidth: 0,
+    flex: 1,
+  },
   badgeImg: {
-    width: "20px",
-    height: "20px",
+    width: "32px",
+    height: "32px",
     objectFit: "contain",
     filter: "drop-shadow(0 4px 8px rgba(0,0,0,0.10))",
   },
@@ -89,56 +76,78 @@ const useStyles = makeStyles({
     marginTop: "8px",
     fontSize: "12px",
   },
+
+  vendorText: {
+    color: "grey",
+  },
+
+  truncate: {
+    display: "block",
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+  },
+
+  descriptionBox: {
+    height: "60px",
+    overflow: "hidden",
+    display: "-webkit-box",
+    WebkitBoxOrient: "vertical",
+    WebkitLineClamp: 3,
+  },
+  descriptionText: {
+    lineHeight: "16px",
+    fontSize: "12px",
+    color: "grey",
+  },
   footer: {
     marginTop: "auto",
-    padding: "8px 16px 16px",
     display: "flex",
-    justifyContent: "flex-end",
+    justifyContent: "flex-start",
   },
 });
 
 function CertCard({ cert }: { cert: Certification }) {
   const styles = useStyles();
+
+  const vendor = vendorConfig[cert.vendor];
+
   return (
     <Card className={styles.card}>
-      <CardPreview className={styles.preview}>
+      <div className={styles.cardTopRow}>
         <img
-          src={cert.badgeUrl}
+          src={vendor?.logo}
           alt={`${cert.name} badge`}
           className={styles.badgeImg}
           loading="lazy"
         />
-      </CardPreview>
-
-      <Tag className={styles.levelTag} appearance="brand" color="red">
-        {cert.level}
-      </Tag>
-
-      <CardHeader
-        header={
-          <Text weight="semibold" size={400}>
+        <div style={{ minWidth: 0, flex: 1 }}>
+          <Text
+            weight="semibold"
+            size={300}
+            className={styles.truncate}
+            title={cert.name}
+          >
             {cert.name}
           </Text>
-        }
-        description={
-          <Link
-            className={styles.externalLink}
-            href={cert.externalLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            appearance="subtle"
-          >
-            Learn more
-          </Link>
-        }
-      />
-      <CardFooter className={styles.footer}>
-        <Button
-          appearance="primary"
-          onClick={() => console.log("call form display")}
+          <Text size={200} className={styles.vendorText}>
+            {cert.vendor}
+          </Text>
+        </div>
+      </div>
+
+      <div className={styles.descriptionBox}>
+        <Text
+          size={200}
+          className={styles.descriptionText}
+          title={cert.description}
         >
-          Apply
-        </Button>
+          {cert.description}
+        </Text>
+      </div>
+      <CardFooter className={styles.footer}>
+        <Button appearance="primary">View Certificate</Button>
+        <Button appearance="secondary">Link to profile</Button>
       </CardFooter>
     </Card>
   );
@@ -147,17 +156,25 @@ function CertCard({ cert }: { cert: Certification }) {
 export function CertListPage() {
   const styles = useStyles();
 
-  const [vendor, setVendor] = useState<Vendor>(VENDOR.AZURE);
-
+  const [vendor, setVendor] = useState<Vendor | "ALL">("ALL");
   const certifications =
-    vendor === VENDOR.AZURE ? azureCertifications : awsCertifications;
-
+    vendor === "ALL"
+      ? [...azureCertifications, ...awsCertifications]
+      : vendor === VENDOR.AZURE
+        ? azureCertifications
+        : awsCertifications;
   return (
     <div className={styles.certListPageGrid}>
-      <h1>Hello, Aisha.</h1>
-      <h2>Let&apos;s get you certified.</h2>
+      <h1>Browse certifications</h1>
       <div className={styles.certMenuGrid}>
         <div className={styles.certMenuGrid}>
+          <ToggleButton
+            checked={vendor === "ALL"}
+            appearance={vendor === "ALL" ? "primary" : "secondary"}
+            onClick={() => setVendor("ALL")}
+          >
+            All
+          </ToggleButton>
           <ToggleButton
             checked={vendor === VENDOR.AZURE}
             appearance={vendor === VENDOR.AZURE ? "primary" : "secondary"}
