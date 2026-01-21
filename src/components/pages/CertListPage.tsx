@@ -147,7 +147,7 @@ function CertCard({ cert }: { cert: Certification }) {
       </div>
       <CardFooter className={styles.footer}>
         <Button appearance="primary">View Certificate</Button>
-        <Button appearance="secondary">Link to profile</Button>
+        <Button appearance="secondary">Apply</Button>
       </CardFooter>
     </Card>
   );
