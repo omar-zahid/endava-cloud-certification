@@ -41,13 +41,11 @@ darkTheme.colorBrandForeground2 = endavabrand[120];
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <FluentProvider theme={webDarkTheme}>
-      <OidcProvider
-      //fallback={<h1>Initializing OIDC...</h1>}
-      >
+      <OidcProvider>
         <QueryClientProvider client={queryClient}>
           <RouterProvider router={router} />
         </QueryClientProvider>
       </OidcProvider>
     </FluentProvider>
-  </React.StrictMode>
+  </React.StrictMode>,
 );

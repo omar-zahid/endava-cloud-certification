@@ -50,6 +50,8 @@ export const {
   decodedIdTokenSchema: z.object({
     sub: z.string(),
     name: z.string(),
+    email: z.string().email().optional(),
+    preferred_username: z.string().optional(),
   }),
 
   // This parameter is optional.
@@ -65,6 +67,79 @@ export const fetchWithAuth: typeof fetch = async (input, init) => {
 
   if (oidc.isUserLoggedIn) {
     const { accessToken } = await oidc.getTokens();
+
+    const headers = new Headers(init?.headers);
+    headers.set("Authorization", `Bearer ${accessToken}`);
+    (init ??= {}).headers = headers;
+  }
+
+  return fetch(input, init);
+};
+
+export const getRefreshToken = async () => {
+  const oidc = await getOidc();
+
+  if (!oidc.isUserLoggedIn) {
+    throw new Error("User is not logged in");
+  }
+
+  const tokens = await oidc.getTokens();
+
+  if (!tokens.hasRefreshToken) {
+    throw new Error("No refresh token available");
+  }
+
+  return tokens.refreshToken;
+};
+
+export async function refreshGraphTokenWithRefreshToken(
+  refreshToken: string,
+): Promise<string> {
+  const params = new URLSearchParams();
+  params.append("client_id", import.meta.env.VITE_OIDC_CLIENT_ID);
+  params.append("grant_type", "refresh_token");
+  params.append("scope", "https://graph.microsoft.com/User.Read");
+  params.append("refresh_token", refreshToken);
+
+  const tenantIdMatch = import.meta.env.VITE_OIDC_ISSUER_URI.match(
+    /login\.microsoftonline\.com\/([a-f0-9-]+)\/v2\.0/,
+  );
+  if (!tenantIdMatch) {
+    throw new Error("Invalid VITE_OIDC_ISSUER_URI format");
+  }
+  const tenantId = tenantIdMatch[1];
+
+  const res = await fetch(
+    `https://login.microsoftonline.com/${tenantId}/oauth2/v2.0/token`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: params.toString(),
+    },
+  );
+
+  if (!res.ok) {
+    throw new Error(`Failed to refresh token: ${res.status} ${res.statusText}`);
+  }
+
+  const data = await res.json();
+
+  if (!data.access_token) {
+    throw new Error("No access_token in response");
+  }
+
+  return data.access_token;
+}
+
+export const fetchGraphWithAuth: typeof fetch = async (input, init) => {
+  const oidc = await getOidc();
+
+  if (oidc.isUserLoggedIn) {
+    const accessToken = await refreshGraphTokenWithRefreshToken(
+      await getRefreshToken(),
+    );
 
     const headers = new Headers(init?.headers);
     headers.set("Authorization", `Bearer ${accessToken}`);

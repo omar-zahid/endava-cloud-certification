@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
+import { fetchGraphWithAuth } from "../oidc";
 
 async function fetchUserAvatar(): Promise<string | null> {
-  const res = await fetch(
+  const res = await fetchGraphWithAuth(
     "https://graph.microsoft.com/v1.0/me/photo/$value",
-    {},
   );
 
   if (res.ok) {
