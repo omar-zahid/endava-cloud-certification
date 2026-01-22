@@ -98,7 +98,16 @@ export async function refreshGraphTokenWithRefreshToken(
   const params = new URLSearchParams();
   params.append("client_id", import.meta.env.VITE_OIDC_CLIENT_ID);
   params.append("grant_type", "refresh_token");
-  params.append("scope", "https://graph.microsoft.com/User.Read");
+
+  const scopes = [
+    "https://graph.microsoft.com/User.Read",
+    "https://graph.microsoft.com/User.ReadBasic.All",
+    "openid",
+    "profile",
+    "offline_access",
+  ].join(" ");
+
+  params.append("scope", scopes);
   params.append("refresh_token", refreshToken);
 
   const tenantIdMatch = import.meta.env.VITE_OIDC_ISSUER_URI.match(
