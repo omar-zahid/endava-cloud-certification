@@ -5,7 +5,9 @@ import {
   NavDrawerBody,
   NavItem,
 } from "@fluentui/react-components";
-import { Certificate20Regular } from "@fluentui/react-icons";
+import { Certificate20Regular, Shield20Regular } from "@fluentui/react-icons";
+import { linkOptions, useNavigate } from "@tanstack/react-router";
+import logo from "../../src/assets/endava_symbol_RGB.svg";
 
 const useStyles = makeStyles({
   brandIcon: {
@@ -15,8 +17,23 @@ const useStyles = makeStyles({
 });
 
 export function Nav() {
+  const navigate = useNavigate();
   const styles = useStyles();
-  const linkDestination = "/";
+
+  const routes = linkOptions([
+    {
+      id: "1",
+      to: "/",
+      label: "Certificates",
+      icon: <Certificate20Regular />,
+    },
+    {
+      id: "2",
+      to: "/protected",
+      label: "Protected",
+      icon: <Shield20Regular />,
+    },
+  ]);
   return (
     <NavDrawer
       open={true}
@@ -25,21 +42,21 @@ export function Nav() {
       type="inline"
     >
       <NavDrawerBody>
-        <AppItem
-          icon={
-            <img src="../public/favicon.ico" className={styles.brandIcon} />
-          }
-          href={linkDestination}
-        >
+        <AppItem icon={<img className={styles.brandIcon} src={logo} />}>
           Endava Cloud Certification
         </AppItem>
-        <NavItem
-          href={linkDestination}
-          icon={<Certificate20Regular />}
-          value="1"
-        >
-          Certifications
-        </NavItem>
+        {routes.map((route) => {
+          return (
+            <NavItem
+              onClick={() => navigate({ to: route.to })}
+              key={route.id}
+              icon={route.icon}
+              value={route.id}
+            >
+              {route.label}
+            </NavItem>
+          );
+        })}
       </NavDrawerBody>
     </NavDrawer>
   );

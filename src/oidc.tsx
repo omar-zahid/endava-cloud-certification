@@ -50,6 +50,8 @@ export const {
   decodedIdTokenSchema: z.object({
     sub: z.string(),
     name: z.string(),
+    email: z.string().email().optional(),
+    preferred_username: z.string().optional(),
   }),
 
   // This parameter is optional.
@@ -58,8 +60,6 @@ export const {
     audience: import.meta.env.VITE_OIDC_AUDIENCE || undefined,
     ui_locales: isSilent ? undefined : "en", // Here you would dynamically get the current language at the time of redirecting to the OIDC server
   }),
-  // Remove this in your repo
-  debugLogs: true,
 }));
 
 export const fetchWithAuth: typeof fetch = async (input, init) => {
@@ -76,40 +76,75 @@ export const fetchWithAuth: typeof fetch = async (input, init) => {
   return fetch(input, init);
 };
 
-// Using the mock adapter:
-// To use this, just remove the code above and uncomment the code below.
-// The mock oidc adapter will be enabled if the OIDC_ISSUER environment variable is not set.
-/*
-import { createReactOidc } from "oidc-spa/react";
-import { createMockReactOidc } from "oidc-spa/mock/react";
-import { z } from "zod";
+export const getRefreshToken = async () => {
+  const oidc = await getOidc();
 
-const decodedIdTokenSchema = z.object({
-    sub: z.string(),
-    name: z.string()
-});
+  if (!oidc.isUserLoggedIn) {
+    throw new Error("User is not logged in");
+  }
 
-const autoLogin = false;
+  const tokens = await oidc.getTokens();
 
-export const { OidcProvider, useOidc, getOidc } =
-    !import.meta.env.VITE_OIDC_ISSUER ?
-        createMockReactOidc({
-            homeUrl: import.meta.env.BASE_URL,
-            mockedTokens: {
-                decodedIdToken: {
-                    sub: "123",
-                    name: "John"
-                } satisfies z.infer<typeof decodedIdTokenSchema>
-            },
-            // NOTE: If autoLogin is set to true this option must be removed
-            isUserInitiallyLoggedIn: true,
-            autoLogin
-        }) :
-        createReactOidc({
-            issuerUri: import.meta.env.VITE_OIDC_ISSUER,
-            clientId: import.meta.env.VITE_OIDC_CLIENT_ID,
-            homeUrl: import.meta.env.BASE_URL,
-            decodedIdTokenSchema,
-            autoLogin
-        });
-*/
+  if (!tokens.hasRefreshToken) {
+    throw new Error("No refresh token available");
+  }
+
+  return tokens.refreshToken;
+};
+
+export async function refreshGraphTokenWithRefreshToken(
+  refreshToken: string,
+): Promise<string> {
+  const params = new URLSearchParams();
+  params.append("client_id", import.meta.env.VITE_OIDC_CLIENT_ID);
+  params.append("grant_type", "refresh_token");
+  params.append("scope", "https://graph.microsoft.com/User.Read");
+  params.append("refresh_token", refreshToken);
+
+  const tenantIdMatch = import.meta.env.VITE_OIDC_ISSUER_URI.match(
+    /login\.microsoftonline\.com\/([a-f0-9-]+)\/v2\.0/,
+  );
+  if (!tenantIdMatch) {
+    throw new Error("Invalid VITE_OIDC_ISSUER_URI format");
+  }
+  const tenantId = tenantIdMatch[1];
+
+  const res = await fetch(
+    `https://login.microsoftonline.com/${tenantId}/oauth2/v2.0/token`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: params.toString(),
+    },
+  );
+
+  if (!res.ok) {
+    throw new Error(`Failed to refresh token: ${res.status} ${res.statusText}`);
+  }
+
+  const data = await res.json();
+
+  if (!data.access_token) {
+    throw new Error("No access_token in response");
+  }
+
+  return data.access_token;
+}
+
+export const fetchGraphWithAuth: typeof fetch = async (input, init) => {
+  const oidc = await getOidc();
+
+  if (oidc.isUserLoggedIn) {
+    const accessToken = await refreshGraphTokenWithRefreshToken(
+      await getRefreshToken(),
+    );
+
+    const headers = new Headers(init?.headers);
+    headers.set("Authorization", `Bearer ${accessToken}`);
+    (init ??= {}).headers = headers;
+  }
+
+  return fetch(input, init);
+};

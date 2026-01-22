@@ -5,7 +5,7 @@ import { OidcProvider } from "./oidc";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { FluentProvider, webLightTheme } from "@fluentui/react-components";
+import { FluentProvider, webDarkTheme } from "@fluentui/react-components";
 import type { BrandVariants, Theme } from "@fluentui/react-components";
 import { createLightTheme } from "@fluentui/react-components";
 
@@ -31,23 +31,21 @@ const endavabrand: BrandVariants = {
   160: "#FFCABE",
 };
 
-const lightTheme: Theme = {
+const endavaTheme: Theme = {
   ...createLightTheme(endavabrand),
 };
 
-lightTheme.colorBrandForeground1 = endavabrand[110];
-lightTheme.colorBrandForeground2 = endavabrand[120];
+endavaTheme.colorBrandForeground1 = endavabrand[110];
+endavaTheme.colorBrandForeground2 = endavabrand[120];
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <FluentProvider theme={webLightTheme}>
-      <OidcProvider
-      //fallback={<h1>Initializing OIDC...</h1>}
-      >
+    <FluentProvider theme={!endavabrand ? endavaTheme : webDarkTheme}>
+      <OidcProvider>
         <QueryClientProvider client={queryClient}>
           <RouterProvider router={router} />
         </QueryClientProvider>
       </OidcProvider>
     </FluentProvider>
-  </React.StrictMode>
+  </React.StrictMode>,
 );
