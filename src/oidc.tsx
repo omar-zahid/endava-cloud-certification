@@ -60,7 +60,6 @@ export const {
     audience: import.meta.env.VITE_OIDC_AUDIENCE || undefined,
     ui_locales: isSilent ? undefined : "en", // Here you would dynamically get the current language at the time of redirecting to the OIDC server
   }),
-  autoLogin: true,
 }));
 
 export const fetchWithAuth: typeof fetch = async (input, init) => {
