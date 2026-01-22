@@ -114,8 +114,8 @@ export function CertListPage() {
         ? azureCertifications
         : awsCertifications;
   return (
-    <div className={styles.certListPageGrid}>
-      <h1>Browse certifications</h1>
+    <>
+      <h2>Browse certifications</h2>
       <div className={styles.certMenuGrid}>
         <div className={styles.certMenuGrid}>
           <ToggleButton
@@ -147,6 +147,6 @@ export function CertListPage() {
           <CertCard key={cert.externalLink || cert.name} cert={cert} />
         ))}
       </div>
-    </div>
+    </>
   );
 }
