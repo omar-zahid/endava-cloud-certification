@@ -96,7 +96,10 @@ function LoggedInAuthButton() {
 }
 
 function NotLoggedInAuthButton() {
-  const { login, issuerUri } = useOidc({ assert: "user not logged in" });
+  const {
+    login,
+    params: { issuerUri },
+  } = useOidc({ assert: "user not logged in" });
   const styles = useStyles();
 
   const keycloakUtils = isKeycloak({ issuerUri })
