@@ -1,7 +1,6 @@
 import { useOidc, enforceLogin, getOidc } from "../oidc";
 import { useState, useEffect } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { decodeJwt } from "oidc-spa/tools/decodeJwt";
 import { isKeycloak, createKeycloakUtils } from "oidc-spa/keycloak";
 import {
   Button,
@@ -11,6 +10,7 @@ import {
   tokens,
   typographyStyles,
 } from "@fluentui/react-components";
+import { decodeJwt } from "oidc-spa/decode-jwt";
 
 export const Route = createFileRoute("/protected")({
   component: ProtectedPage,
@@ -75,7 +75,8 @@ function ProtectedPage() {
     goToAuthServer,
     backFromAuthServer,
     renewTokens,
-    params: { issuerUri, clientId },
+    clientId,
+    issuerUri,
   } = useOidc({
     assert: "user logged in",
   });
@@ -169,7 +170,7 @@ function ProtectedPage() {
           <Link
             href={keycloakUtils.getAccountUrl({
               clientId,
-              backToAppFromAccountUrl: import.meta.env.BASE_URL,
+              validRedirectUri: import.meta.env.BASE_URL,
             })}
           >
             Go to Keycloak Account Management Console
@@ -226,16 +227,15 @@ function useDecodedAccessToken_DIAGNOSTIC_ONLY() {
         setDecodedAccessToken(decodedAccessToken);
       };
 
-      const { unsubscribe } = oidc.subscribeToTokensChange((tokens) =>
-        update(tokens.accessToken),
-      );
+      const { unsubscribeFromAccessTokenRotation: unsubscribe } =
+        oidc.subscribeToAccessTokenRotation((tokens) => update(tokens));
 
       cleanup = () => {
         unsubscribe();
       };
 
       {
-        const { accessToken } = await oidc.getTokens();
+        const accessToken = await oidc.getAccessToken();
 
         if (!isActive) {
           return;
