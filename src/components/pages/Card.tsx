@@ -3,14 +3,9 @@ import {
   Card,
   CardFooter,
   Text,
-  ToggleButton,
   makeStyles,
 } from "@fluentui/react-components";
-import { azureCertifications } from "../../temporary-static-data/azure-certifications";
-import { awsCertifications } from "../../temporary-static-data/aws-certifications";
-import { useState } from "react";
 import { Certification } from "../../types/Certification";
-import { VENDOR, Vendor } from "../../constants/vendor";
 import { vendorConfig } from "../../constants/vendorConfig";
 
 const useStyles = makeStyles({
@@ -107,7 +102,7 @@ const useStyles = makeStyles({
   },
 });
 
-function CertCard({ cert }: { cert: Certification }) {
+export function CertCard({ cert }: { cert: Certification }) {
   const styles = useStyles();
 
   const vendor = vendorConfig[cert.vendor];
@@ -150,53 +145,5 @@ function CertCard({ cert }: { cert: Certification }) {
         <Button appearance="secondary">Apply</Button>
       </CardFooter>
     </Card>
-  );
-}
-
-export function CertListPage() {
-  const styles = useStyles();
-
-  const [vendor, setVendor] = useState<Vendor | "ALL">("ALL");
-  const certifications =
-    vendor === "ALL"
-      ? [...azureCertifications, ...awsCertifications]
-      : vendor === VENDOR.AZURE
-        ? azureCertifications
-        : awsCertifications;
-  return (
-    <div className={styles.certListPageGrid}>
-      <h1>Browse certifications</h1>
-      <div className={styles.certMenuGrid}>
-        <div className={styles.certMenuGrid}>
-          <ToggleButton
-            checked={vendor === "ALL"}
-            appearance={vendor === "ALL" ? "primary" : "secondary"}
-            onClick={() => setVendor("ALL")}
-          >
-            All
-          </ToggleButton>
-          <ToggleButton
-            checked={vendor === VENDOR.AZURE}
-            appearance={vendor === VENDOR.AZURE ? "primary" : "secondary"}
-            onClick={() => setVendor(VENDOR.AZURE)}
-          >
-            Azure
-          </ToggleButton>
-
-          <ToggleButton
-            checked={vendor === VENDOR.AWS}
-            appearance={vendor === VENDOR.AWS ? "primary" : "secondary"}
-            onClick={() => setVendor(VENDOR.AWS)}
-          >
-            AWS
-          </ToggleButton>
-        </div>
-      </div>
-      <div className={styles.certCardGrid}>
-        {certifications.map((cert) => (
-          <CertCard key={cert.externalLink || cert.name} cert={cert} />
-        ))}
-      </div>
-    </div>
   );
 }

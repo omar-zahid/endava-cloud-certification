@@ -1,8 +1,6 @@
 import { createRootRoute, Outlet } from "@tanstack/react-router";
 import { Nav } from "../components/Nav";
 import "./root.css";
-import { Header } from "../components/Header";
-import { Body } from "../components/Body";
 
 import { makeStyles, tokens } from "@fluentui/react-components";
 
@@ -30,8 +28,6 @@ const Shell = () => {
     <div className={styles.shell}>
       <Nav />
       <div className={styles.content}>
-        <Header />
-        <Body />
         <Outlet />
       </div>
     </div>
