@@ -21,8 +21,8 @@ importers:
         specifier: 1.131.27
         version: 1.131.27(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       oidc-spa:
-        specifier: latest
-        version: 8.2.7(@tanstack/react-router@1.131.27(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(@types/react@19.1.10)(react@19.1.1)
+        specifier: 10.0.2
+        version: 10.0.2(@tanstack/react-router@1.131.27(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(@types/react@19.1.10)(react@19.1.1)
       react:
         specifier: 19.1.1
         version: 19.1.1
@@ -2066,8 +2066,8 @@ packages:
     resolution: {integrity: sha512-gXah6aZrcUxjWg2zR2MwouP2eHlCBzdV4pygudehaKXSGW4v2AsRQUK+lwwXhii6KFZcunEnmSUoYp5CXibxtA==}
     engines: {node: '>= 0.4'}
 
-  oidc-spa@8.2.7:
-    resolution: {integrity: sha512-0K+RorYYM3B7GaaoF8f4rwe4CNZAYNZLwN9zQlj6OX7L2L9JNlt7rKcWz4l8k4l2zRbRfrpyRh7/f/BfW9qtmA==}
+  oidc-spa@10.0.2:
+    resolution: {integrity: sha512-0ABHVhrZXQXzzpC4eaAp3oi/pZdR647zIY/s8YiZSdYPWLHkPSDoe+K3qwdL1AI9ARBcAHK9cGoShRBJF7uT6g==}
     peerDependencies:
       '@angular/common': '*'
       '@angular/core': '*'
@@ -5327,7 +5327,7 @@ snapshots:
       define-properties: 1.2.1
       es-object-atoms: 1.1.1
 
-  oidc-spa@8.2.7(@tanstack/react-router@1.131.27(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(@types/react@19.1.10)(react@19.1.1):
+  oidc-spa@10.0.2(@tanstack/react-router@1.131.27(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(@types/react@19.1.10)(react@19.1.1):
     optionalDependencies:
       '@tanstack/react-router': 1.131.27(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       '@types/react': 19.1.10

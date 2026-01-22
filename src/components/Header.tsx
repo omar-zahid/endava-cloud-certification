@@ -86,10 +86,7 @@ function LoggedInAuthButton() {
 }
 
 function NotLoggedInAuthButton() {
-  const {
-    login,
-    params: { issuerUri },
-  } = useOidc({ assert: "user not logged in" });
+  const { login, issuerUri } = useOidc({ assert: "user not logged in" });
 
   const keycloakUtils = isKeycloak({ issuerUri })
     ? createKeycloakUtils({ issuerUri })
