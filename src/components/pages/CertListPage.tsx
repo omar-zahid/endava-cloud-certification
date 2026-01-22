@@ -5,6 +5,8 @@ import {
   Text,
   ToggleButton,
   makeStyles,
+  tokens,
+  typographyStyles,
 } from "@fluentui/react-components";
 import { azureCertifications } from "../../temporary-static-data/azure-certifications";
 import { awsCertifications } from "../../temporary-static-data/aws-certifications";
@@ -14,71 +16,62 @@ import { VENDOR, Vendor } from "../../constants/vendor";
 import { vendorConfig } from "../../constants/vendorConfig";
 
 const useStyles = makeStyles({
-  certMenuGrid: {
-    display: "flex",
-    justifyContent: "flex-start ",
-    gap: "8px",
+  page: {
+    paddingTop: tokens.spacingVerticalXXL,
+    paddingRight: tokens.spacingHorizontalXXL,
+    paddingBottom: tokens.spacingVerticalXXL,
+    paddingLeft: tokens.spacingHorizontalXXL,
+    maxWidth: "1100px",
+    marginLeft: "auto",
+    marginRight: "auto",
   },
 
-  certListPageGrid: {
-    justifyContent: "flex-start",
-    margin: "auto",
-    paddingTop: "40px",
+  title: {
+    ...typographyStyles.title2,
+    marginTop: 0,
+    marginRight: 0,
+    marginBottom: tokens.spacingVerticalXL,
+    marginLeft: 0,
+  },
+
+  certMenu: {
+    display: "flex",
+    flexWrap: "wrap",
+    alignItems: "center",
+    columnGap: tokens.spacingHorizontalS,
+    rowGap: tokens.spacingVerticalS,
   },
 
   certCardGrid: {
     display: "grid",
-    gridTemplateColumns: "repeat(auto-fill, 320px)",
-    paddingTop: "16px",
-    width: "1056px",
-    gap: "16px",
-    justifyContent: "flex-start",
+    gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
+    alignItems: "stretch",
+    gap: tokens.spacingHorizontalM,
+    paddingTop: tokens.spacingVerticalL,
   },
 
   card: {
     height: "100%",
     display: "flex",
     flexDirection: "column",
-    width: "300px",
+    width: "100%",
   },
   cardTopRow: {
     display: "flex",
     alignItems: "center",
-    gap: "12px",
-    padding: "4px",
-  },
-  cardHeader: {
-    minWidth: 0,
-    flex: 1,
+    gap: tokens.spacingHorizontalM,
+    padding: tokens.spacingVerticalS,
   },
   badgeImg: {
     width: "32px",
     height: "32px",
     objectFit: "contain",
-    filter: "drop-shadow(0 4px 8px rgba(0,0,0,0.10))",
-  },
-
-  body: {
-    padding: "8px 16px",
-    display: "flex",
-    flexDirection: "column",
-    gap: "8px",
-  },
-
-  levelTag: {
-    "& *": {
-      fontSize: "10px",
-      lineHeight: "12px",
-      padding: "-5px 2px",
-    },
-  },
-  externalLink: {
-    marginTop: "8px",
-    fontSize: "12px",
+    borderRadius: tokens.borderRadiusMedium,
+    boxShadow: tokens.shadow4,
   },
 
   vendorText: {
-    color: "grey",
+    color: tokens.colorNeutralForeground3,
   },
 
   truncate: {
@@ -96,14 +89,18 @@ const useStyles = makeStyles({
     WebkitLineClamp: 3,
   },
   descriptionText: {
-    lineHeight: "16px",
-    fontSize: "12px",
-    color: "grey",
+    ...typographyStyles.caption1,
+    color: tokens.colorNeutralForeground3,
   },
   footer: {
     marginTop: "auto",
     display: "flex",
     justifyContent: "flex-start",
+    gap: tokens.spacingHorizontalS,
+  },
+  cardHeaderWrap: {
+    minWidth: 0,
+    flex: 1,
   },
 });
 
@@ -121,7 +118,7 @@ function CertCard({ cert }: { cert: Certification }) {
           className={styles.badgeImg}
           loading="lazy"
         />
-        <div style={{ minWidth: 0, flex: 1 }}>
+        <div className={styles.cardHeaderWrap}>
           <Text
             weight="semibold"
             size={300}
@@ -164,33 +161,33 @@ export function CertListPage() {
         ? azureCertifications
         : awsCertifications;
   return (
-    <div className={styles.certListPageGrid}>
-      <h1>Browse certifications</h1>
-      <div className={styles.certMenuGrid}>
-        <div className={styles.certMenuGrid}>
-          <ToggleButton
-            checked={vendor === "ALL"}
-            appearance={vendor === "ALL" ? "primary" : "secondary"}
-            onClick={() => setVendor("ALL")}
-          >
-            All
-          </ToggleButton>
-          <ToggleButton
-            checked={vendor === VENDOR.AZURE}
-            appearance={vendor === VENDOR.AZURE ? "primary" : "secondary"}
-            onClick={() => setVendor(VENDOR.AZURE)}
-          >
-            Azure
-          </ToggleButton>
+    <div className={styles.page}>
+      <Text as="h1" className={styles.title}>
+        Browse certifications
+      </Text>
+      <div className={styles.certMenu}>
+        <ToggleButton
+          checked={vendor === "ALL"}
+          appearance={vendor === "ALL" ? "primary" : "secondary"}
+          onClick={() => setVendor("ALL")}
+        >
+          All
+        </ToggleButton>
+        <ToggleButton
+          checked={vendor === VENDOR.AZURE}
+          appearance={vendor === VENDOR.AZURE ? "primary" : "secondary"}
+          onClick={() => setVendor(VENDOR.AZURE)}
+        >
+          Azure
+        </ToggleButton>
 
-          <ToggleButton
-            checked={vendor === VENDOR.AWS}
-            appearance={vendor === VENDOR.AWS ? "primary" : "secondary"}
-            onClick={() => setVendor(VENDOR.AWS)}
-          >
-            AWS
-          </ToggleButton>
-        </div>
+        <ToggleButton
+          checked={vendor === VENDOR.AWS}
+          appearance={vendor === VENDOR.AWS ? "primary" : "secondary"}
+          onClick={() => setVendor(VENDOR.AWS)}
+        >
+          AWS
+        </ToggleButton>
       </div>
       <div className={styles.certCardGrid}>
         {certifications.map((cert) => (

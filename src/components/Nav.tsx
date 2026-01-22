@@ -4,6 +4,7 @@ import {
   NavDrawer,
   NavDrawerBody,
   NavItem,
+  tokens,
 } from "@fluentui/react-components";
 import { Certificate20Regular, Shield20Regular } from "@fluentui/react-icons";
 import { linkOptions, useNavigate } from "@tanstack/react-router";
@@ -11,8 +12,9 @@ import logo from "../../src/assets/endava_symbol_RGB.svg";
 
 const useStyles = makeStyles({
   brandIcon: {
-    width: "20x",
+    width: "20px",
     height: "20px",
+    borderRadius: tokens.borderRadiusSmall,
   },
 });
 

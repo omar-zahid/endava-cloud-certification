@@ -3,12 +3,68 @@ import { useState, useEffect } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { decodeJwt } from "oidc-spa/tools/decodeJwt";
 import { isKeycloak, createKeycloakUtils } from "oidc-spa/keycloak";
+import {
+  Button,
+  Link,
+  Text,
+  makeStyles,
+  tokens,
+  typographyStyles,
+} from "@fluentui/react-components";
 
 export const Route = createFileRoute("/protected")({
   component: ProtectedPage,
   beforeLoad: async (params) => {
     await enforceLogin(params);
     // If this line is reached, the user is logged in.
+  },
+});
+
+const useStyles = makeStyles({
+  page: {
+    paddingTop: tokens.spacingVerticalXXL,
+    paddingRight: tokens.spacingHorizontalXXL,
+    paddingBottom: tokens.spacingVerticalXXL,
+    paddingLeft: tokens.spacingHorizontalXXL,
+  },
+  title: {
+    ...typographyStyles.subtitle1,
+    marginTop: 0,
+    marginRight: 0,
+    marginBottom: tokens.spacingVerticalM,
+    marginLeft: 0,
+  },
+  codeTitle: {
+    ...typographyStyles.body1Strong,
+    marginTop: tokens.spacingVerticalL,
+    marginRight: 0,
+    marginBottom: tokens.spacingVerticalS,
+    marginLeft: 0,
+  },
+  pre: {
+    textAlign: "left",
+    paddingTop: tokens.spacingVerticalS,
+    paddingRight: tokens.spacingHorizontalM,
+    paddingBottom: tokens.spacingVerticalS,
+    paddingLeft: tokens.spacingHorizontalM,
+    borderRadius: tokens.borderRadiusMedium,
+    backgroundColor: tokens.colorNeutralBackground2,
+    overflowX: "auto",
+  },
+  actions: {
+    display: "flex",
+    flexWrap: "wrap",
+    columnGap: tokens.spacingHorizontalS,
+    rowGap: tokens.spacingVerticalS,
+    marginTop: tokens.spacingVerticalL,
+    marginRight: 0,
+    marginBottom: 0,
+    marginLeft: 0,
+  },
+  stack: {
+    display: "flex",
+    flexDirection: "column",
+    gap: tokens.spacingVerticalS,
   },
 });
 
@@ -29,6 +85,7 @@ function ProtectedPage() {
     : undefined;
 
   const { decodedAccessToken } = useDecodedAccessToken_DIAGNOSTIC_ONLY();
+  const styles = useStyles();
 
   if (decodedAccessToken === undefined) {
     // Loading...
@@ -36,75 +93,90 @@ function ProtectedPage() {
   }
 
   return (
-    <h4>
-      Hello {decodedIdToken.name}
-      <br />
-      <br />
-      {decodedAccessToken !== null ? (
-        <>
-          <p>Decoded Access Token:</p>
-          <pre style={{ textAlign: "left" }}>
-            {JSON.stringify(decodedAccessToken, null, 2)}
-          </pre>
-        </>
-      ) : (
-        <p>The Access Token issued by the IDP is opaque (Not a JWT).</p>
-      )}
-      <br />
-      <button onClick={() => renewTokens()}>Renew tokens </button>
-      <br />
-      {keycloakUtils !== undefined && (
-        <>
-          <br />
-          <button
-            onClick={() =>
-              goToAuthServer({
-                extraQueryParams: { kc_action: "UPDATE_PASSWORD" },
-              })
-            }
-          >
-            Change password
-          </button>
-          {backFromAuthServer?.extraQueryParams.kc_action ===
+    <div className={styles.page}>
+      <Text as="h2" className={styles.title}>
+        Hello {decodedIdToken.name}
+      </Text>
+
+      <div className={styles.stack}>
+        {decodedAccessToken !== null ? (
+          <>
+            <Text className={styles.codeTitle}>Decoded Access Token</Text>
+            <pre className={styles.pre}>
+              {JSON.stringify(decodedAccessToken, null, 2)}
+            </pre>
+          </>
+        ) : (
+          <Text>The Access Token issued by the IDP is opaque (Not a JWT).</Text>
+        )}
+
+        <div className={styles.actions}>
+          <Button appearance="primary" onClick={() => renewTokens()}>
+            Renew tokens
+          </Button>
+
+          {keycloakUtils !== undefined && (
+            <>
+              <Button
+                appearance="secondary"
+                onClick={() =>
+                  goToAuthServer({
+                    extraQueryParams: { kc_action: "UPDATE_PASSWORD" },
+                  })
+                }
+              >
+                Change password
+              </Button>
+
+              <Button
+                appearance="secondary"
+                onClick={() =>
+                  goToAuthServer({
+                    extraQueryParams: { kc_action: "UPDATE_PROFILE" },
+                  })
+                }
+              >
+                Update profile
+              </Button>
+
+              <Button
+                appearance="secondary"
+                onClick={() =>
+                  goToAuthServer({
+                    extraQueryParams: { kc_action: "delete_account" },
+                  })
+                }
+              >
+                Delete account
+              </Button>
+            </>
+          )}
+        </div>
+
+        {keycloakUtils !== undefined &&
+          backFromAuthServer?.extraQueryParams.kc_action ===
             "UPDATE_PASSWORD" && (
-            <p>Result: {backFromAuthServer.result.kc_action_status}</p>
+            <Text>Result: {backFromAuthServer.result.kc_action_status}</Text>
           )}
-          <br />
-          <button
-            onClick={() =>
-              goToAuthServer({
-                extraQueryParams: { kc_action: "UPDATE_PROFILE" },
-              })
-            }
-          >
-            Update profile
-          </button>
-          {backFromAuthServer?.extraQueryParams.kc_action ===
+
+        {keycloakUtils !== undefined &&
+          backFromAuthServer?.extraQueryParams.kc_action ===
             "UPDATE_PROFILE" && (
-            <p>Result: {backFromAuthServer.result.kc_action_status}</p>
+            <Text>Result: {backFromAuthServer.result.kc_action_status}</Text>
           )}
-          <br />
-          <button
-            onClick={() =>
-              goToAuthServer({
-                extraQueryParams: { kc_action: "delete_account" },
-              })
-            }
-          >
-            Delete account
-          </button>
-          <br />
-          <a
+
+        {keycloakUtils !== undefined && (
+          <Link
             href={keycloakUtils.getAccountUrl({
               clientId,
               backToAppFromAccountUrl: import.meta.env.BASE_URL,
             })}
           >
             Go to Keycloak Account Management Console
-          </a>
-        </>
-      )}
-    </h4>
+          </Link>
+        )}
+      </div>
+    </div>
   );
 }
 

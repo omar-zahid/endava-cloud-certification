@@ -9,11 +9,32 @@ import {
   MenuList,
   MenuPopover,
   MenuTrigger,
+  Text,
   tokens,
 } from "@fluentui/react-components";
 import { useUserAvatar } from "../api/useUserAvatar";
 
 const useStyles = makeStyles({
+  header: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "100%",
+    paddingTop: tokens.spacingVerticalM,
+    paddingRight: tokens.spacingHorizontalL,
+    paddingBottom: tokens.spacingVerticalM,
+    paddingLeft: tokens.spacingHorizontalL,
+  },
+  authButtons: {
+    display: "flex",
+    flexWrap: "wrap",
+    alignItems: "center",
+    columnGap: tokens.spacingHorizontalS,
+    rowGap: tokens.spacingVerticalS,
+  },
+  errorText: {
+    color: tokens.colorPaletteRedForeground1,
+  },
   displayName: {
     paddingLeft: tokens.spacingHorizontalL,
   },
@@ -21,27 +42,19 @@ const useStyles = makeStyles({
 
 export function Header() {
   const { isUserLoggedIn, initializationError } = useOidc();
+  const styles = useStyles();
 
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        top: 0,
-        left: 0,
-        width: "100%",
-      }}
-    >
+    <div className={styles.header}>
       {/* You do not have to display an error here, it's just to show that if you want you can
                 But it's best to enable the user to navigate unauthenticated and to display an error
                 only if he attempt to login (by default it display an alert) */}
       {initializationError !== undefined && (
-        <div style={{ color: "red" }}>
+        <Text className={styles.errorText}>
           {initializationError.isAuthServerLikelyDown
             ? "Sorry our Auth server is down"
             : `Initialization error: ${initializationError.message}`}
-        </div>
+        </Text>
       )}
 
       <div></div>
@@ -78,9 +91,6 @@ function LoggedInAuthButton() {
           </MenuList>
         </MenuPopover>
       </Menu>
-      {/* <span>Hello {decodedIdToken.name}</span>
-      &nbsp; &nbsp;
-      <button onClick={() => logout({ redirectTo: "home" })}>Logout</button> */}
     </div>
   );
 }
@@ -90,6 +100,7 @@ function NotLoggedInAuthButton() {
     login,
     params: { issuerUri },
   } = useOidc({ assert: "user not logged in" });
+  const styles = useStyles();
 
   const keycloakUtils = isKeycloak({ issuerUri })
     ? createKeycloakUtils({ issuerUri })
@@ -98,10 +109,13 @@ function NotLoggedInAuthButton() {
   const isAuth0 = issuerUri.includes("auth0");
 
   return (
-    <div>
-      <button onClick={() => login()}>Login</button>{" "}
+    <div className={styles.authButtons}>
+      <Button appearance="primary" onClick={() => login()}>
+        Login
+      </Button>
       {keycloakUtils !== undefined && (
-        <button
+        <Button
+          appearance="secondary"
           onClick={() =>
             login({
               transformUrlBeforeRedirect:
@@ -110,10 +124,11 @@ function NotLoggedInAuthButton() {
           }
         >
           Register
-        </button>
+        </Button>
       )}
       {isAuth0 && (
-        <button
+        <Button
+          appearance="secondary"
           onClick={() =>
             login({
               extraQueryParams: {
@@ -123,7 +138,7 @@ function NotLoggedInAuthButton() {
           }
         >
           Register
-        </button>
+        </Button>
       )}
     </div>
   );
