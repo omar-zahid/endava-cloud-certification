@@ -5,7 +5,7 @@ import { OidcInitializationGate } from "./oidc";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { FluentProvider } from "@fluentui/react-components";
+import { FluentProvider, webDarkTheme } from "@fluentui/react-components";
 import type { BrandVariants, Theme } from "@fluentui/react-components";
 import { createLightTheme } from "@fluentui/react-components";
 
@@ -40,7 +40,7 @@ endavaTheme.colorBrandForeground2 = endavabrand[120];
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <FluentProvider theme={endavaTheme}>
+    <FluentProvider theme={endavabrand ? endavaTheme : webDarkTheme}>
       <OidcInitializationGate>
         <QueryClientProvider client={queryClient}>
           <RouterProvider router={router} />

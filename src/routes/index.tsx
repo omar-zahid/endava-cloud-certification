@@ -24,8 +24,6 @@ const useStyles = makeStyles({
     display: "flex",
     flexDirection: "column",
     rowGap: tokens.spacingVerticalL,
-    marginLeft: "auto",
-    marginRight: "auto",
   },
   certMenuGrid: {
     display: "flex",
