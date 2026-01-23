@@ -11,11 +11,13 @@ export const {
 } = oidcSpa
   .withExpectedDecodedIdTokenShape({
     decodedIdTokenSchema: z.object({
+      oid: z.string(),
       sub: z.string(),
       name: z.string(),
       preferred_username: z.string(),
     }),
     decodedIdToken_mock: {
+      oid: "39f64677-e019-4db2-959f-faf3df0dfa52",
       sub: "endava-cloud-certification",
       name: "Cloud Certification",
       preferred_username: "cloud.endava.com",
