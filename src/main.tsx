@@ -40,7 +40,7 @@ endavaTheme.colorBrandForeground2 = endavabrand[120];
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <FluentProvider theme={!endavabrand ? endavaTheme : webDarkTheme}>
+    <FluentProvider theme={endavabrand ? endavaTheme : webDarkTheme}>
       <OidcInitializationGate>
         <QueryClientProvider client={queryClient}>
           <RouterProvider router={router} />
