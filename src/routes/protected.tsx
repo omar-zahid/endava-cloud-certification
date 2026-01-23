@@ -8,7 +8,6 @@ export const Route = createFileRoute("/protected")({
   component: ProtectedPage,
   beforeLoad: async (params) => {
     await enforceLogin(params);
-    // If this line is reached, the user is logged in.
   },
 });
 

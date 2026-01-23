@@ -33,6 +33,7 @@ bootstrapOidc(
         implementation: "real",
         issuerUri: import.meta.env.VITE_OIDC_ISSUER_URI,
         clientId: import.meta.env.VITE_OIDC_CLIENT_ID,
+        scopes: (import.meta.env.VITE_OIDC_SCOPE || undefined)?.split(" "),
         debugLogs: true,
       },
 );
