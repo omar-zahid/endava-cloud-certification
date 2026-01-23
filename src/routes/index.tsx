@@ -1,4 +1,9 @@
-import { makeStyles, ToggleButton } from "@fluentui/react-components";
+import {
+  makeStyles,
+  Text,
+  ToggleButton,
+  tokens,
+} from "@fluentui/react-components";
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { VENDOR, Vendor } from "../constants/vendor";
@@ -11,95 +16,29 @@ export const Route = createFileRoute("/")({
 });
 
 const useStyles = makeStyles({
+  page: {
+    paddingTop: tokens.spacingVerticalXL,
+    paddingBottom: tokens.spacingVerticalXL,
+    paddingLeft: tokens.spacingHorizontalXL,
+    paddingRight: tokens.spacingHorizontalXL,
+    display: "flex",
+    flexDirection: "column",
+    rowGap: tokens.spacingVerticalL,
+    marginLeft: "auto",
+    marginRight: "auto",
+  },
   certMenuGrid: {
     display: "flex",
-    justifyContent: "flex-start ",
-    gap: "8px",
-  },
-
-  certListPageGrid: {
     justifyContent: "flex-start",
-    margin: "auto",
-    paddingTop: "40px",
+    columnGap: tokens.spacingHorizontalS,
   },
-
   certCardGrid: {
     display: "grid",
-    gridTemplateColumns: "repeat(auto-fill, 320px)",
-    paddingTop: "16px",
-    width: "1056px",
-    gap: "16px",
-    justifyContent: "flex-start",
-  },
-
-  card: {
-    height: "100%",
-    display: "flex",
-    flexDirection: "column",
-    width: "300px",
-  },
-  cardTopRow: {
-    display: "flex",
-    alignItems: "center",
-    gap: "12px",
-    padding: "4px",
-  },
-  cardHeader: {
-    minWidth: 0,
-    flex: 1,
-  },
-  badgeImg: {
-    width: "32px",
-    height: "32px",
-    objectFit: "contain",
-    filter: "drop-shadow(0 4px 8px rgba(0,0,0,0.10))",
-  },
-
-  body: {
-    padding: "8px 16px",
-    display: "flex",
-    flexDirection: "column",
-    gap: "8px",
-  },
-
-  levelTag: {
-    "& *": {
-      fontSize: "10px",
-      lineHeight: "12px",
-      padding: "-5px 2px",
-    },
-  },
-  externalLink: {
-    marginTop: "8px",
-    fontSize: "12px",
-  },
-
-  vendorText: {
-    color: "grey",
-  },
-
-  truncate: {
-    display: "block",
-    whiteSpace: "nowrap",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-  },
-
-  descriptionBox: {
-    height: "60px",
-    overflow: "hidden",
-    display: "-webkit-box",
-    WebkitBoxOrient: "vertical",
-    WebkitLineClamp: 3,
-  },
-  descriptionText: {
-    lineHeight: "16px",
-    fontSize: "12px",
-    color: "grey",
-  },
-  footer: {
-    marginTop: "auto",
-    display: "flex",
+    gridTemplateColumns: "repeat(auto-fill, 300px)",
+    rowGap: tokens.spacingVerticalL,
+    columnGap: tokens.spacingHorizontalL,
+    maxWidth: "1056px",
+    width: "100%",
     justifyContent: "flex-start",
   },
 });
@@ -114,39 +53,40 @@ export function CertListPage() {
         ? azureCertifications
         : awsCertifications;
   return (
-    <>
-      <h2>Browse certifications</h2>
-      <div className={styles.certMenuGrid}>
-        <div className={styles.certMenuGrid}>
-          <ToggleButton
-            checked={vendor === "ALL"}
-            appearance={vendor === "ALL" ? "primary" : "secondary"}
-            onClick={() => setVendor("ALL")}
-          >
-            All
-          </ToggleButton>
-          <ToggleButton
-            checked={vendor === VENDOR.AZURE}
-            appearance={vendor === VENDOR.AZURE ? "primary" : "secondary"}
-            onClick={() => setVendor(VENDOR.AZURE)}
-          >
-            Azure
-          </ToggleButton>
+    <div className={styles.page}>
+      <Text as="h2" size={500} weight="semibold">
+        Browse certifications
+      </Text>
 
-          <ToggleButton
-            checked={vendor === VENDOR.AWS}
-            appearance={vendor === VENDOR.AWS ? "primary" : "secondary"}
-            onClick={() => setVendor(VENDOR.AWS)}
-          >
-            AWS
-          </ToggleButton>
-        </div>
+      <div className={styles.certMenuGrid}>
+        <ToggleButton
+          checked={vendor === "ALL"}
+          appearance={vendor === "ALL" ? "primary" : "secondary"}
+          onClick={() => setVendor("ALL")}
+        >
+          All
+        </ToggleButton>
+        <ToggleButton
+          checked={vendor === VENDOR.AZURE}
+          appearance={vendor === VENDOR.AZURE ? "primary" : "secondary"}
+          onClick={() => setVendor(VENDOR.AZURE)}
+        >
+          Azure
+        </ToggleButton>
+        <ToggleButton
+          checked={vendor === VENDOR.AWS}
+          appearance={vendor === VENDOR.AWS ? "primary" : "secondary"}
+          onClick={() => setVendor(VENDOR.AWS)}
+        >
+          AWS
+        </ToggleButton>
       </div>
+
       <div className={styles.certCardGrid}>
         {certifications.map((cert) => (
           <CertCard key={cert.externalLink || cert.name} cert={cert} />
         ))}
       </div>
-    </>
+    </div>
   );
 }
