@@ -1,6 +1,5 @@
 import { createRootRoute, Outlet } from "@tanstack/react-router";
 import { Nav } from "../components/Nav";
-import "./root.css";
 
 import { makeStyles, tokens } from "@fluentui/react-components";
 

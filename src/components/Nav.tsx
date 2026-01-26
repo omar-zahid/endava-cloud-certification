@@ -13,7 +13,7 @@ import { Profile } from "./Profile";
 
 const useStyles = makeStyles({
   brandIcon: {
-    width: "20x",
+    width: "20px",
     height: "20px",
   },
 });
