@@ -1,4 +1,4 @@
-import { Spinner, Text, makeStyles } from "@fluentui/react-components";
+import { Spinner, Text, makeStyles, tokens } from "@fluentui/react-components";
 import type { SpinnerProps } from "@fluentui/react-components";
 
 const useStyles = makeStyles({
@@ -15,10 +15,10 @@ const useStyles = makeStyles({
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    gap: "12px",
+    gap: tokens.spacingVerticalS,
   },
   message: {
-    color: "rgba(255, 255, 255, 0.9)",
+    color: tokens.colorNeutralForegroundInverted,
     textAlign: "center",
     maxWidth: "420px",
   },
