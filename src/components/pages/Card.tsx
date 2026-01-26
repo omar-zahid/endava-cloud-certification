@@ -6,8 +6,12 @@ import {
   makeStyles,
   tokens,
 } from "@fluentui/react-components";
+import { useNavigate } from "@tanstack/react-router";
 import { Certification } from "../../types/Certification";
 import { vendorConfig } from "../../constants/vendorConfig";
+import type { Vendor } from "../../constants/vendor";
+import { certToSlug } from "../../utils/certSlug";
+import { useOidc } from "../../oidc";
 
 const useStyles = makeStyles({
   card: {
@@ -66,16 +70,25 @@ const useStyles = makeStyles({
   },
 });
 
-export function CertCard({ cert }: { cert: Certification }) {
+export function CertCard({
+  cert,
+  activeVendorFilter,
+}: {
+  cert: Certification;
+  activeVendorFilter: Vendor | "ALL";
+}) {
   const styles = useStyles();
+  const navigate = useNavigate();
+  const { isUserLoggedIn } = useOidc();
 
   const vendor = vendorConfig[cert.vendor];
+  const certId = certToSlug(cert);
 
   return (
     <Card className={styles.card}>
       <div className={styles.cardTopRow}>
         <img
-          src={vendor?.logo}
+          src={vendor?.logo ? `/${vendor.logo}` : cert.badgeUrl}
           alt={`${cert.name} badge`}
           className={styles.badgeImg}
           loading="lazy"
@@ -105,8 +118,19 @@ export function CertCard({ cert }: { cert: Certification }) {
         </Text>
       </div>
       <CardFooter className={styles.footer}>
-        <Button appearance="primary">View Certificate</Button>
-        <Button appearance="secondary">Apply</Button>
+        <Button
+          appearance="primary"
+          onClick={() =>
+            navigate({
+              to: "/certificate/$id",
+              params: { id: certId },
+              search: { vendor: activeVendorFilter },
+            })
+          }
+        >
+          View Certificate
+        </Button>
+        {isUserLoggedIn ? <Button appearance="secondary">Apply</Button> : null}
       </CardFooter>
     </Card>
   );
