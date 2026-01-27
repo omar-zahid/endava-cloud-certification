@@ -9,7 +9,6 @@ import {
 import { useNavigate } from "@tanstack/react-router";
 import { Certification } from "../../types/Certification";
 import { vendorConfig } from "../../constants/vendorConfig";
-import type { Vendor } from "../../constants/vendor";
 import { certToSlug } from "../../utils/certSlug";
 import { useOidc } from "../../oidc";
 
@@ -72,10 +71,8 @@ const useStyles = makeStyles({
 
 export function CertCard({
   cert,
-  activeVendorFilter,
 }: {
   cert: Certification;
-  activeVendorFilter: Vendor | "ALL";
 }) {
   const styles = useStyles();
   const navigate = useNavigate();
@@ -88,8 +85,8 @@ export function CertCard({
     <Card className={styles.card}>
       <div className={styles.cardTopRow}>
         <img
-          src={vendor?.logo ? `/${vendor.logo}` : cert.badgeUrl}
-          alt={`${cert.name} badge`}
+          src={vendor?.logo}
+          alt={`${cert.vendor} logo`}
           className={styles.badgeImg}
           loading="lazy"
         />
@@ -124,7 +121,6 @@ export function CertCard({
             navigate({
               to: "/certificate/$id",
               params: { id: certId },
-              search: { vendor: activeVendorFilter },
             })
           }
         >

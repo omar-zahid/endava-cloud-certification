@@ -4,28 +4,19 @@ import {
   ToggleButton,
   tokens,
 } from "@fluentui/react-components";
-import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { z } from "zod";
 import { VENDOR, Vendor } from "../constants/vendor";
 import { azureCertifications } from "../temporary-static-data/azure-certifications";
 import { CertCard } from "../components/pages/Card";
 import { awsCertifications } from "../temporary-static-data/aws-certifications";
 import { CertErrorDialog } from "../components/dialog/CertErrorDialog";
+import { useState } from "react";
 
 export const Route = createFileRoute("/")({
   validateSearch: z.object({
-    vendor: z.enum(["ALL", VENDOR.AZURE, VENDOR.AWS]).optional(),
     notFound: z.coerce.boolean().optional(),
   }),
-  beforeLoad: ({ search }) => {
-    if (!search.vendor) {
-      throw redirect({
-        to: "/",
-        search: { ...search, vendor: "ALL" },
-        replace: true,
-      });
-    }
-  },
   component: CertListPage,
 });
 
@@ -59,8 +50,8 @@ export function CertListPage() {
 
   const navigate = useNavigate();
   const search = Route.useSearch();
-  const vendor = (search.vendor ?? "ALL") as Vendor | "ALL";
   const notFoundOpen = Boolean(search.notFound);
+  const [vendor, setVendor] = useState<Vendor | "ALL">("ALL");
   const certifications =
     vendor === "ALL"
       ? [...azureCertifications, ...awsCertifications]
@@ -74,7 +65,7 @@ export function CertListPage() {
         onClose={() =>
           navigate({
             to: "/",
-            search: { vendor, notFound: undefined },
+            search: { notFound: undefined },
             replace: true,
           })
         }
@@ -88,21 +79,21 @@ export function CertListPage() {
         <ToggleButton
           checked={vendor === "ALL"}
           appearance={vendor === "ALL" ? "primary" : "secondary"}
-          onClick={() => navigate({ to: "/", search: { vendor: "ALL" } })}
+          onClick={() => setVendor("ALL")}
         >
           All
         </ToggleButton>
         <ToggleButton
           checked={vendor === VENDOR.AZURE}
           appearance={vendor === VENDOR.AZURE ? "primary" : "secondary"}
-          onClick={() => navigate({ to: "/", search: { vendor: VENDOR.AZURE } })}
+          onClick={() => setVendor(VENDOR.AZURE)}
         >
           Azure
         </ToggleButton>
         <ToggleButton
           checked={vendor === VENDOR.AWS}
           appearance={vendor === VENDOR.AWS ? "primary" : "secondary"}
-          onClick={() => navigate({ to: "/", search: { vendor: VENDOR.AWS } })}
+          onClick={() => setVendor(VENDOR.AWS)}
         >
           AWS
         </ToggleButton>
@@ -113,7 +104,6 @@ export function CertListPage() {
           <CertCard
             key={cert.externalLink || cert.name}
             cert={cert}
-            activeVendorFilter={vendor}
           />
         ))}
       </div>

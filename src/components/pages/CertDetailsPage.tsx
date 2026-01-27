@@ -25,7 +25,7 @@ const useStyles = makeStyles({
   headerRow: {
     display: "flex",
     alignItems: "center",
-    justifyContent: "space-between",
+    justifyContent: "flex-start",
     columnGap: tokens.spacingHorizontalM,
   },
   card: {
@@ -137,10 +137,8 @@ const useStyles = makeStyles({
 
 export function CertDetailsPage({
   cert,
-  onBack,
 }: {
   cert: Certification;
-  onBack?: () => void;
 }) {
   const styles = useStyles();
   const vendor = vendorConfig[cert.vendor];
@@ -160,11 +158,6 @@ export function CertDetailsPage({
         <Text as="h2" size={500} weight="semibold">
           Certificate details
         </Text>
-        {onBack ? (
-          <Button appearance="secondary" onClick={onBack}>
-            Back
-          </Button>
-        ) : null}
       </div>
 
       <Card className={styles.card}>

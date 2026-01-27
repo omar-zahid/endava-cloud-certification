@@ -26,7 +26,6 @@ export function Nav() {
     {
       id: "1",
       to: "/",
-      search: { vendor: "ALL" },
       label: "Certificates",
       icon: <Certificate20Regular />,
     },
