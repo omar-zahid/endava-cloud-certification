@@ -10,6 +10,7 @@ import { VENDOR, Vendor } from "../constants/vendor";
 import { azureCertifications } from "../temporary-static-data/azure-certifications";
 import { CertCard } from "../components/pages/Card";
 import { awsCertifications } from "../temporary-static-data/aws-certifications";
+import { Banner } from "../components/MessageBar";
 
 export const Route = createFileRoute("/")({
   component: CertListPage,
@@ -51,40 +52,43 @@ export function CertListPage() {
         ? azureCertifications
         : awsCertifications;
   return (
-    <div className={styles.page}>
-      <Text as="h2" size={500} weight="semibold">
-        Browse certifications
-      </Text>
+    <>
+      <Banner />
+      <div className={styles.page}>
+        <Text as="h2" size={500} weight="semibold">
+          Browse certifications
+        </Text>
 
-      <div className={styles.certMenuGrid}>
-        <ToggleButton
-          checked={vendor === "ALL"}
-          appearance={vendor === "ALL" ? "primary" : "secondary"}
-          onClick={() => setVendor("ALL")}
-        >
-          All
-        </ToggleButton>
-        <ToggleButton
-          checked={vendor === VENDOR.AZURE}
-          appearance={vendor === VENDOR.AZURE ? "primary" : "secondary"}
-          onClick={() => setVendor(VENDOR.AZURE)}
-        >
-          Azure
-        </ToggleButton>
-        <ToggleButton
-          checked={vendor === VENDOR.AWS}
-          appearance={vendor === VENDOR.AWS ? "primary" : "secondary"}
-          onClick={() => setVendor(VENDOR.AWS)}
-        >
-          AWS
-        </ToggleButton>
-      </div>
+        <div className={styles.certMenuGrid}>
+          <ToggleButton
+            checked={vendor === "ALL"}
+            appearance={vendor === "ALL" ? "primary" : "secondary"}
+            onClick={() => setVendor("ALL")}
+          >
+            All
+          </ToggleButton>
+          <ToggleButton
+            checked={vendor === VENDOR.AZURE}
+            appearance={vendor === VENDOR.AZURE ? "primary" : "secondary"}
+            onClick={() => setVendor(VENDOR.AZURE)}
+          >
+            Azure
+          </ToggleButton>
+          <ToggleButton
+            checked={vendor === VENDOR.AWS}
+            appearance={vendor === VENDOR.AWS ? "primary" : "secondary"}
+            onClick={() => setVendor(VENDOR.AWS)}
+          >
+            AWS
+          </ToggleButton>
+        </div>
 
-      <div className={styles.certCardGrid}>
-        {certifications.map((cert) => (
-          <CertCard key={cert.externalLink || cert.name} cert={cert} />
-        ))}
+        <div className={styles.certCardGrid}>
+          {certifications.map((cert) => (
+            <CertCard key={cert.externalLink || cert.name} cert={cert} />
+          ))}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
