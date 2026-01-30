@@ -1,6 +1,5 @@
 import {
   Button,
-  Card,
   Text,
   makeStyles,
   tokens,
@@ -10,79 +9,100 @@ import { vendorConfig } from "../../constants/vendorConfig";
 import { useOidc } from "../../oidc";
 import { useMemo, useState } from "react";
 import { Loading } from "../Loading";
+import bannerBg from "../../assets/cert_details_page_background.svg";
 
 const useStyles = makeStyles({
   page: {
+    paddingBottom: tokens.spacingVerticalXL,
+    display: "flex",
+    flexDirection: "column",
+    rowGap: tokens.spacingVerticalL,
+    alignItems: "center",
+  },
+  contentWrap: {
+    width: "100%",
+    display: "flex",
+    justifyContent: "center",
+    paddingLeft: tokens.spacingHorizontalXL,
+    paddingRight: tokens.spacingHorizontalXL,
+    boxSizing: "border-box",
+    "@media (max-width: 640px)": {
+      paddingLeft: tokens.spacingHorizontalM,
+      paddingRight: tokens.spacingHorizontalM,
+    },
+  },
+  bannerWrap: {
+    width: "100%",
+    display: "flex",
+    justifyContent: "center",
+  },
+  banner: {
+    width: "100%",
+    maxWidth: "100%",
+    minHeight: "300px",
+    height: "auto",
+    backgroundImage: `url(${bannerBg})`,
+    backgroundSize: "cover",
+    backgroundRepeat: "no-repeat",
+    backgroundPosition: "center",
+    border: `1px solid ${tokens.colorNeutralStroke2}`,
+    overflow: "hidden",
+    display: "flex",
+    alignItems: "stretch",
+  },
+  bannerContent: {
+    width: "50%",
+    minWidth: 0,
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    rowGap: tokens.spacingVerticalXS,
     paddingTop: tokens.spacingVerticalXL,
     paddingBottom: tokens.spacingVerticalXL,
     paddingLeft: tokens.spacingHorizontalXL,
     paddingRight: tokens.spacingHorizontalXL,
-    display: "flex",
-    flexDirection: "column",
-    rowGap: tokens.spacingVerticalL,
-    maxWidth: "900px",
+    "@media (max-width: 640px)": {
+      width: "100%",
+      paddingTop: tokens.spacingVerticalL,
+      paddingBottom: tokens.spacingVerticalL,
+      paddingLeft: tokens.spacingHorizontalM,
+      paddingRight: tokens.spacingHorizontalM,
+      rowGap: tokens.spacingVerticalXXS,
+    },
   },
-  headerRow: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "flex-start",
-    columnGap: tokens.spacingHorizontalM,
-  },
-  card: {
-    padding: tokens.spacingHorizontalL,
-    display: "flex",
-    flexDirection: "column",
-    rowGap: tokens.spacingVerticalM,
-    borderRadius: tokens.borderRadiusXLarge,
-    boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
-  },
-  titleRow: {
-    display: "flex",
-    alignItems: "center",
-    columnGap: tokens.spacingHorizontalM,
-    paddingBottom: tokens.spacingVerticalM,
-    borderBottom: `1px solid ${tokens.colorNeutralStroke2}`,
-  },
-  badgeWrap: {
-    width: "72px",
-    height: "72px",
-    borderRadius: tokens.borderRadiusCircular,
-    backgroundColor: tokens.colorNeutralBackground2,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    border: `1px solid ${tokens.colorNeutralStroke2}`,
-    flex: "0 0 auto",
-  },
-  badgeImg: {
+  bannerBadge: {
     width: "56px",
     height: "56px",
     objectFit: "contain",
     filter: "drop-shadow(0 4px 8px rgba(0,0,0,0.10))",
   },
-  titleBlock: {
-    minWidth: 0,
+  bannerKicker: {
+    marginTop: tokens.spacingVerticalM,
+    color: tokens.colorNeutralForeground3,
+    letterSpacing: "0.08em",
+    textTransform: "uppercase",
+  },
+  bannerTitle: {
+    marginTop: tokens.spacingVerticalS,
+    marginBottom: tokens.spacingVerticalS,
+    lineHeight: tokens.lineHeightBase600,
+  },
+  bannerDescription: {
+    color: tokens.colorNeutralForeground2,
+    display: "-webkit-box",
+    WebkitBoxOrient: "vertical",
+    WebkitLineClamp: 3,
+    overflow: "hidden",
+    "@media (max-width: 640px)": {
+      WebkitLineClamp: 5,
+    },
+  },
+  detailsSection: {
+    width: "100%",
+    maxWidth: "1252px",
     display: "flex",
     flexDirection: "column",
-    rowGap: tokens.spacingVerticalXXS,
-  },
-  subtitleText: {
-    color: tokens.colorNeutralForeground3,
-  },
-  descriptionBlock: {
-    backgroundColor: tokens.colorNeutralBackground2,
-    borderRadius: tokens.borderRadiusLarge,
-    paddingTop: tokens.spacingVerticalM,
-    paddingBottom: tokens.spacingVerticalM,
-    paddingLeft: tokens.spacingHorizontalM,
-    paddingRight: tokens.spacingHorizontalM,
-    borderLeft: `4px solid ${tokens.colorBrandForeground1}`,
-    display: "flex",
-    flexDirection: "column",
-    rowGap: tokens.spacingVerticalXS,
-  },
-  sectionLabel: {
-    color: tokens.colorNeutralForeground3,
+    rowGap: tokens.spacingVerticalM,
   },
   vendorValue: {
     display: "flex",
@@ -101,6 +121,9 @@ const useStyles = makeStyles({
     display: "grid",
     gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
     gap: tokens.spacingHorizontalM,
+    "@media (max-width: 640px)": {
+      gridTemplateColumns: "minmax(0, 1fr)",
+    },
   },
   metaItem: {
     display: "flex",
@@ -132,6 +155,8 @@ const useStyles = makeStyles({
     justifyContent: "flex-start",
     columnGap: tokens.spacingHorizontalS,
     paddingTop: tokens.spacingVerticalS,
+    flexWrap: "wrap",
+    rowGap: tokens.spacingVerticalS,
   },
 });
 
@@ -154,38 +179,35 @@ export function CertDetailsPage({
     <div className={styles.page}>
       <Loading active={isLoading} message="Loading certificate…" />
 
-      <div className={styles.headerRow}>
-        <Text as="h2" size={500} weight="semibold">
-          Certificate details
-        </Text>
-      </div>
-
-      <Card className={styles.card}>
-        <div className={styles.titleRow}>
-          <div className={styles.badgeWrap}>
+      <div className={styles.bannerWrap}>
+        <div className={styles.banner}>
+          <div className={styles.bannerContent}>
             <img
               src={cert.badgeUrl}
               alt={`${cert.name} badge`}
-              className={styles.badgeImg}
+              className={styles.bannerBadge}
               loading="lazy"
               onLoad={markImageDone}
               onError={markImageDone}
             />
-          </div>
 
-          <div className={styles.titleBlock}>
-            <Text as="h3" size={500} weight="semibold">
+            <Text size={200} weight="semibold" className={styles.bannerKicker}>
+              Certification
+            </Text>
+
+            <Text as="h2" size={600} weight="semibold" className={styles.bannerTitle}>
               {cert.name}
+            </Text>
+
+            <Text size={300} className={styles.bannerDescription}>
+              {cert.description}
             </Text>
           </div>
         </div>
+      </div>
 
-        <div className={styles.descriptionBlock}>
-          <Text size={200} weight="bold" className={styles.sectionLabel}>
-            Description
-          </Text>
-          <Text size={300}>{cert.description}</Text>
-        </div>
+      <div className={styles.contentWrap}>
+        <div className={styles.detailsSection}>
 
         <div className={styles.metaGrid}>
           <div className={styles.metaItem}>
@@ -239,7 +261,8 @@ export function CertDetailsPage({
           </Button>
           {isUserLoggedIn ? <Button appearance="secondary">Apply</Button> : null}
         </div>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }

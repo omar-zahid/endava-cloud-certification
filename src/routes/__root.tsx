@@ -6,7 +6,7 @@ import { makeStyles, tokens } from "@fluentui/react-components";
 const useStyles = makeStyles({
   shell: {
     display: "flex",
-    gap: tokens.spacingHorizontalXL,
+    // gap: tokens.spacingHorizontalXL,
     height: "100vh",
   },
   content: {
