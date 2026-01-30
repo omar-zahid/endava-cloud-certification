@@ -1,12 +1,11 @@
 import { createRootRoute, Outlet } from "@tanstack/react-router";
 import { Nav } from "../components/Nav";
 
-import { makeStyles, tokens } from "@fluentui/react-components";
+import { makeStyles } from "@fluentui/react-components";
 
 const useStyles = makeStyles({
   shell: {
     display: "flex",
-    // gap: tokens.spacingHorizontalXL,
     height: "100vh",
   },
   content: {
