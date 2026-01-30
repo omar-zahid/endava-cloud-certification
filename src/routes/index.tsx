@@ -1,4 +1,5 @@
 import {
+  Divider,
   makeStyles,
   Text,
   ToggleButton,
@@ -10,6 +11,7 @@ import { VENDOR, Vendor } from "../constants/vendor";
 import { azureCertifications } from "../temporary-static-data/azure-certifications";
 import { CertCard } from "../components/pages/Card";
 import { awsCertifications } from "../temporary-static-data/aws-certifications";
+import { Carousel } from "../components/Carousel";
 
 export const Route = createFileRoute("/")({
   component: CertListPage,
@@ -24,6 +26,10 @@ const useStyles = makeStyles({
     display: "flex",
     flexDirection: "column",
     rowGap: tokens.spacingVerticalL,
+  },
+  divider: {
+    maxWidth: "100%",
+    alignSelf: "flex-start",
   },
   certMenuGrid: {
     display: "flex",
@@ -52,6 +58,9 @@ export function CertListPage() {
         : awsCertifications;
   return (
     <div className={styles.page}>
+      <Carousel />
+      <Divider className={styles.divider} />
+
       <Text as="h2" size={500} weight="semibold">
         Browse certifications
       </Text>
