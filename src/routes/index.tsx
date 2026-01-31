@@ -1,5 +1,4 @@
 import {
-  Divider,
   makeStyles,
   Text,
   ToggleButton,
@@ -106,10 +105,7 @@ export function CertListPage() {
 
       <div className={styles.certCardGrid}>
         {certifications.map((cert) => (
-          <CertCard
-            key={cert.externalLink || cert.name}
-            cert={cert}
-          />
+          <CertCard key={cert.externalLink || cert.name} cert={cert} />
         ))}
       </div>
     </div>
