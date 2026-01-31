@@ -4,13 +4,13 @@ import "./index.css";
 import { OidcInitializationGate } from "./oidc";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { FluentProvider, webDarkTheme } from "@fluentui/react-components";
 import type { BrandVariants, Theme } from "@fluentui/react-components";
 import { createLightTheme } from "@fluentui/react-components";
+import { queryClient } from "@/queryClient";
 
 const router = createRouter({ routeTree });
-const queryClient = new QueryClient();
 
 const endavabrand: BrandVariants = {
   10: "#070200",
