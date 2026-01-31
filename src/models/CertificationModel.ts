@@ -1,4 +1,6 @@
-export type CertificateVendor = "Azure" | "AWS";
+export const CERTIFICATE_VENDORS = ["Azure", "AWS"] as const;
+
+export type CertificateVendor = (typeof CERTIFICATE_VENDORS)[number];
 
 export type CertificateLevel = "Associate" | "Professional";
 
