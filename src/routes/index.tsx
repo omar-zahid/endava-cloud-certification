@@ -1,15 +1,26 @@
-import { Button, makeStyles, Text, tokens } from "@fluentui/react-components";
+import {
+  Button,
+  makeStyles,
+  Text,
+  tokens,
+  Select,
+} from "@fluentui/react-components";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo } from "react";
 import { z } from "zod";
-import { certificatesQueryOptions } from "@/api/useCertificate";
+import {
+  certificateRolesQueryOptions,
+  certificatesQueryOptions,
+} from "@/api/useCertificate";
 import { CertificateCard } from "@/components/certificate/CertificateCard";
 import {
   CertificateVendor,
   CERTIFICATE_VENDORS,
 } from "@/models/CertificationModel";
 import { queryClient } from "@/queryClient";
+
+const ALL = "All" as const;
 
 export const Route = createFileRoute("/")({
   validateSearch: (search) =>
@@ -36,17 +47,22 @@ export function CertListPage() {
   const search = Route.useSearch();
   const navigate = Route.useNavigate();
 
-  const vendorFilter: CertificateVendor | "All" = search.vendor ?? "All";
+  const vendorFilter: CertificateVendor | undefined = search.vendor;
+  const roleFilter: string | undefined = search.role;
 
   const filters = useMemo(
-    () => (vendorFilter === "All" ? {} : { vendor: vendorFilter }),
-    [vendorFilter],
+    () => ({
+      ...(vendorFilter ? { vendor: vendorFilter } : {}),
+      ...(roleFilter ? { role: roleFilter } : {}),
+    }),
+    [vendorFilter, roleFilter],
   );
+
   const { data } = useSuspenseQuery(certificatesQueryOptions(filters));
-  const vendorOptions: Array<CertificateVendor | "All"> = [
-    "All",
-    ...CERTIFICATE_VENDORS,
-  ];
+  const vendorOptions = [ALL, ...CERTIFICATE_VENDORS] as const;
+
+  const { data: roles } = useSuspenseQuery(certificateRolesQueryOptions());
+  const roleOptions = [ALL, ...roles];
 
   return (
     <>
@@ -62,7 +78,7 @@ export function CertListPage() {
               navigate({
                 search: (prev: typeof search) => ({
                   ...prev,
-                  vendor: vendor === "All" ? undefined : vendor,
+                  vendor: vendor === ALL ? undefined : vendor,
                 }),
               });
             }}
@@ -71,6 +87,27 @@ export function CertListPage() {
           </Button>
         ))}
       </div>
+      <div className={styles.filters}>
+        <Select
+          value={search.role ?? ALL}
+          onChange={(e) => {
+            const role = e.target.value;
+            navigate({
+              search: (prev: typeof search) => ({
+                ...prev,
+                role: role === ALL ? undefined : role,
+              }),
+            });
+          }}
+        >
+          {roleOptions.map((role) => (
+            <option key={role} value={role}>
+              {role}
+            </option>
+          ))}
+        </Select>
+      </div>
+
       {data.length === 0 ? (
         <Text size={300} className={styles.emptyText}>
           No certificates available yet.

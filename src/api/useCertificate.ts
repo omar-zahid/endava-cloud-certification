@@ -36,6 +36,14 @@ async function fetchCertificateById(id: string): Promise<Certificate> {
   return res.json();
 }
 
+async function fetchCertificateRoles(): Promise<string[]> {
+  const res = await fetchWithAuth("certificates/roles");
+  if (!res.ok) {
+    throw new Error("Failed to fetch certificate roles");
+  }
+  return res.json();
+}
+
 export const certificatesQueryOptions = (filters: CertificatesFilter = {}) =>
   queryOptions({
     queryKey: ["certificates", filters],
@@ -48,10 +56,20 @@ export const certificateByIdQueryOptions = (id: string) =>
     queryFn: () => fetchCertificateById(id),
   });
 
+export const certificateRolesQueryOptions = () =>
+  queryOptions({
+    queryKey: ["certificateRoles"],
+    queryFn: () => fetchCertificateRoles(),
+  });
+
 export function useCertificates(filters: CertificatesFilter = {}) {
   return useQuery(certificatesQueryOptions(filters));
 }
 
 export function useCertificateById(id: string) {
   return useQuery(certificateByIdQueryOptions(id));
+}
+
+export function useCertificateRoles() {
+  return useQuery(certificateRolesQueryOptions());
 }
