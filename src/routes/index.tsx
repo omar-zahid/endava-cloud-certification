@@ -5,15 +5,19 @@ import {
   ToggleButton,
   tokens,
 } from "@fluentui/react-components";
-import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { z } from "zod";
 import { VENDOR, Vendor } from "../constants/vendor";
 import { azureCertifications } from "../temporary-static-data/azure-certifications";
 import { CertCard } from "../components/pages/Card";
 import { awsCertifications } from "../temporary-static-data/aws-certifications";
-import { Carousel } from "../components/Carousel";
+import { CertErrorDialog } from "../components/dialog/CertErrorDialog";
+import { useState } from "react";
 
 export const Route = createFileRoute("/")({
+  validateSearch: z.object({
+    notFound: z.coerce.boolean().optional(),
+  }),
   component: CertListPage,
 });
 
@@ -49,6 +53,9 @@ const useStyles = makeStyles({
 export function CertListPage() {
   const styles = useStyles();
 
+  const navigate = useNavigate();
+  const search = Route.useSearch();
+  const notFoundOpen = Boolean(search.notFound);
   const [vendor, setVendor] = useState<Vendor | "ALL">("ALL");
   const certifications =
     vendor === "ALL"
@@ -58,8 +65,16 @@ export function CertListPage() {
         : awsCertifications;
   return (
     <div className={styles.page}>
-      <Carousel />
-      <Divider className={styles.divider} />
+      <CertErrorDialog
+        open={notFoundOpen}
+        onClose={() =>
+          navigate({
+            to: "/",
+            search: { notFound: undefined },
+            replace: true,
+          })
+        }
+      />
 
       <Text as="h2" size={500} weight="semibold">
         Browse certifications
@@ -91,7 +106,10 @@ export function CertListPage() {
 
       <div className={styles.certCardGrid}>
         {certifications.map((cert) => (
-          <CertCard key={cert.externalLink || cert.name} cert={cert} />
+          <CertCard
+            key={cert.externalLink || cert.name}
+            cert={cert}
+          />
         ))}
       </div>
     </div>
