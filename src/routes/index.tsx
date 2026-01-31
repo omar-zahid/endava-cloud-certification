@@ -30,6 +30,10 @@ const useStyles = makeStyles({
     flexDirection: "column",
     rowGap: tokens.spacingVerticalL,
   },
+  divider: {
+    maxWidth: "100%",
+    alignSelf: "flex-start",
+  },
   certMenuGrid: {
     display: "flex",
     justifyContent: "flex-start",
@@ -101,10 +105,7 @@ export function CertListPage() {
 
       <div className={styles.certCardGrid}>
         {certifications.map((cert) => (
-          <CertCard
-            key={cert.externalLink || cert.name}
-            cert={cert}
-          />
+          <CertCard key={cert.externalLink || cert.name} cert={cert} />
         ))}
       </div>
     </div>
