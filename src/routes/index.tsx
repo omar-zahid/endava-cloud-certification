@@ -6,17 +6,17 @@ import { CertificateCard } from "@/components/certificate/CertificateCard";
 import { queryClient } from "@/queryClient";
 
 export const Route = createFileRoute("/")({
-  loader: () => queryClient.ensureQueryData(certificatesQueryOptions),
+  loader: () => queryClient.ensureQueryData(certificatesQueryOptions()),
   errorComponent: CertListError,
   component: CertListPage,
 });
 
 export function CertListPage() {
   const styles = useStyles();
-  const { data } = useSuspenseQuery(certificatesQueryOptions);
+  const { data } = useSuspenseQuery(certificatesQueryOptions());
 
   return (
-    <div className={styles.container}>
+    <>
       <Text size={600} weight="semibold" className={styles.title}>
         Certificates
       </Text>
@@ -30,7 +30,7 @@ export function CertListPage() {
           <CertificateCard key={certificate.id} {...certificate} />
         ))}
       </div>
-    </div>
+    </>
   );
 }
 
@@ -40,18 +40,13 @@ function CertListError({ error }: { error: unknown }) {
     error instanceof Error ? error.message : "Failed to load certificates.";
 
   return (
-    <div className={styles.container}>
-      <Text role="alert" size={300} className={styles.errorText}>
-        {errorMessage}
-      </Text>
-    </div>
+    <Text role="alert" size={300} className={styles.errorText}>
+      {errorMessage}
+    </Text>
   );
 }
 
 const useStyles = makeStyles({
-  container: {
-    padding: tokens.spacingVerticalXL,
-  },
   title: {
     marginBottom: tokens.spacingVerticalM,
   },

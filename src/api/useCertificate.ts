@@ -1,20 +1,57 @@
 import { queryOptions, useQuery } from "@tanstack/react-query";
 import { fetchWithAuth } from "@/oidc";
-import { Certificate } from "@/models/CertificationModel";
+import { Certificate, CertificateVendor } from "@/models/CertificationModel";
 
-async function fetchCertificates(): Promise<Certificate[]> {
-  const res = await fetchWithAuth("certificates");
+type CertificatesFilter = {
+  vendor?: CertificateVendor;
+  role?: string;
+};
+
+async function fetchCertificates(
+  filters: CertificatesFilter = {},
+): Promise<Certificate[]> {
+  const params = new URLSearchParams();
+  if (filters.vendor) {
+    params.set("vendor", filters.vendor);
+  }
+  if (filters.role) {
+    params.set("role", filters.role);
+  }
+
+  const route = params.size
+    ? `certificates?${params.toString()}`
+    : "certificates";
+  const res = await fetchWithAuth(route);
   if (!res.ok) {
     throw new Error("Failed to fetch certificates");
   }
   return res.json();
 }
 
-export const certificatesQueryOptions = queryOptions({
-  queryKey: ["certificates"],
-  queryFn: () => fetchCertificates(),
-});
+async function fetchCertificateById(id: string): Promise<Certificate> {
+  const res = await fetchWithAuth(`certificates/${encodeURIComponent(id)}`);
+  if (!res.ok) {
+    throw new Error("Failed to fetch certificate");
+  }
+  return res.json();
+}
 
-export function useCertificate() {
-  return useQuery(certificatesQueryOptions);
+export const certificatesQueryOptions = (filters: CertificatesFilter = {}) =>
+  queryOptions({
+    queryKey: ["certificates", filters],
+    queryFn: () => fetchCertificates(filters),
+  });
+
+export const certificateByIdQueryOptions = (id: string) =>
+  queryOptions({
+    queryKey: ["certificate", id],
+    queryFn: () => fetchCertificateById(id),
+  });
+
+export function useCertificates(filters: CertificatesFilter = {}) {
+  return useQuery(certificatesQueryOptions(filters));
+}
+
+export function useCertificateById(id: string) {
+  return useQuery(certificateByIdQueryOptions(id));
 }
