@@ -8,7 +8,7 @@ import {
 } from "@fluentui/react-components";
 import { Certificate20Regular, Shield20Regular } from "@fluentui/react-icons";
 import { linkOptions, useNavigate } from "@tanstack/react-router";
-import logo from "../../src/assets/endava_symbol_RGB.svg";
+import logo from "@/assets/endava_symbol_RGB.svg";
 import { Profile } from "./Profile";
 
 const useStyles = makeStyles({

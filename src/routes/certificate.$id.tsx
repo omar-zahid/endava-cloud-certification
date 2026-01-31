@@ -1,38 +1,26 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { CertDetailsPage } from "../components/pages/CertDetailsPage";
-import { awsCertifications } from "../temporary-static-data/aws-certifications";
-import { azureCertifications } from "../temporary-static-data/azure-certifications";
-import { certToSlug } from "../utils/certSlug";
-import { useEffect, useMemo } from "react";
+import { makeStyles, tokens } from "@fluentui/react-components";
+import { enforceLogin } from "@/oidc";
+import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/certificate/$id")({
-  component: CertDetailsRoute,
+  component: CertificateDetail,
+  beforeLoad: async (params) => {
+    await enforceLogin(params);
+  },
 });
 
-function CertDetailsRoute() {
-  const navigate = useNavigate();
-  const { id } = Route.useParams();
+export function CertificateDetail() {
+  const styles = useStyles();
 
-  const allCerts = useMemo(
-    () => [...azureCertifications, ...awsCertifications],
-    [],
+  return (
+    <>
+      <div className={styles.container}>Certificate Detail Page</div>
+    </>
   );
-
-  const cert = useMemo(
-    () => allCerts.find((c) => certToSlug(c) === id),
-    [allCerts, id],
-  );
-
-  useEffect(() => {
-    if (cert) return;
-    navigate({
-      to: "/",
-      search: { notFound: true },
-      replace: true,
-    });
-  }, [cert, navigate]);
-
-  if (!cert) return null;
-
-  return <CertDetailsPage cert={cert} />;
 }
+
+const useStyles = makeStyles({
+  container: {
+    padding: tokens.spacingVerticalXL,
+  },
+});

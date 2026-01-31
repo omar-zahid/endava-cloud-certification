@@ -1,4 +1,4 @@
-import { useOidc } from "../oidc";
+import { useOidc } from "@/oidc";
 import {
   Avatar,
   Button,
@@ -11,28 +11,8 @@ import {
   NavItem,
   tokens,
 } from "@fluentui/react-components";
-import { useUserAvatar } from "../api/useUserAvatar";
+import { useUserAvatar } from "@/api/useUserAvatar";
 import { PersonKey20Color } from "@fluentui/react-icons";
-
-const useStyles = makeStyles({
-  container: {
-    display: "flex",
-    justifyContent: "space-between",
-    gap: tokens.spacingHorizontalL,
-    paddingBottom: tokens.spacingVerticalL,
-  },
-  displayName: {
-    textAlign: "left",
-  },
-});
-
-export function Profile() {
-  const { isUserLoggedIn } = useOidc();
-
-  return (
-    <>{isUserLoggedIn ? <LoggedInAuthButton /> : <NotLoggedInAuthButton />}</>
-  );
-}
 
 function LoggedInAuthButton() {
   const { decodedIdToken, logout } = useOidc({ assert: "user logged in" });
@@ -75,5 +55,25 @@ function NotLoggedInAuthButton() {
     >
       Login
     </NavItem>
+  );
+}
+
+const useStyles = makeStyles({
+  container: {
+    display: "flex",
+    justifyContent: "space-between",
+    gap: tokens.spacingHorizontalL,
+    paddingBottom: tokens.spacingVerticalL,
+  },
+  displayName: {
+    textAlign: "left",
+  },
+});
+
+export function Profile() {
+  const { isUserLoggedIn } = useOidc();
+
+  return (
+    <>{isUserLoggedIn ? <LoggedInAuthButton /> : <NotLoggedInAuthButton />}</>
   );
 }

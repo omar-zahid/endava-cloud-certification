@@ -40,8 +40,11 @@ bootstrapOidc(
       },
 );
 
-export const fetchWithAuth: typeof fetch = async (input, init) => {
+export const fetchWithAuth: typeof fetch = async (route, init) => {
+  const API_URL = import.meta.env.VITE_API_URL;
   const oidc = await getOidc();
+
+  const url = new URL(route.toString(), API_URL).toString();
 
   if (oidc.isUserLoggedIn) {
     const accessToken = await oidc.getAccessToken();
@@ -50,7 +53,7 @@ export const fetchWithAuth: typeof fetch = async (input, init) => {
     (init ??= {}).headers = headers;
   }
 
-  return fetch(input, init);
+  return fetch(url, init);
 };
 
 export const fetchGraphWithAuth: typeof fetch = async (input, init) => {

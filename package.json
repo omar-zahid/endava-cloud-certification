@@ -17,6 +17,7 @@
     "oidc-spa": "10.0.2",
     "react": "19.1.1",
     "react-dom": "19.1.1",
+    "vite-tsconfig-paths": "^6.0.5",
     "zod": "3.24.2"
   },
   "devDependencies": {

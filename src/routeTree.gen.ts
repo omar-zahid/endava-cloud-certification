@@ -9,16 +9,10 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as Protected2RouteImport } from './routes/protected2'
 import { Route as ProtectedRouteImport } from './routes/protected'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CertificateIdRouteImport } from './routes/certificate.$id'
 
-const Protected2Route = Protected2RouteImport.update({
-  id: '/protected2',
-  path: '/protected2',
-  getParentRoute: () => rootRouteImport,
-} as any).lazy(() => import('./routes/protected2.lazy').then((d) => d.Route))
 const ProtectedRoute = ProtectedRouteImport.update({
   id: '/protected',
   path: '/protected',
@@ -38,46 +32,35 @@ const CertificateIdRoute = CertificateIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/protected': typeof ProtectedRoute
-  '/protected2': typeof Protected2Route
   '/certificate/$id': typeof CertificateIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/protected': typeof ProtectedRoute
-  '/protected2': typeof Protected2Route
   '/certificate/$id': typeof CertificateIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/protected': typeof ProtectedRoute
-  '/protected2': typeof Protected2Route
   '/certificate/$id': typeof CertificateIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/protected' | '/protected2' | '/certificate/$id'
+  fullPaths: '/' | '/protected' | '/certificate/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/protected' | '/protected2' | '/certificate/$id'
-  id: '__root__' | '/' | '/protected' | '/protected2' | '/certificate/$id'
+  to: '/' | '/protected' | '/certificate/$id'
+  id: '__root__' | '/' | '/protected' | '/certificate/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ProtectedRoute: typeof ProtectedRoute
-  Protected2Route: typeof Protected2Route
   CertificateIdRoute: typeof CertificateIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/protected2': {
-      id: '/protected2'
-      path: '/protected2'
-      fullPath: '/protected2'
-      preLoaderRoute: typeof Protected2RouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/protected': {
       id: '/protected'
       path: '/protected'
@@ -105,7 +88,6 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ProtectedRoute: ProtectedRoute,
-  Protected2Route: Protected2Route,
   CertificateIdRoute: CertificateIdRoute,
 }
 export const routeTree = rootRouteImport
