@@ -1,8 +1,21 @@
-import { makeStyles, Text, tokens } from "@fluentui/react-components";
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogBody,
+  DialogContent,
+  DialogSurface,
+  DialogTitle,
+  DialogTrigger,
+  makeStyles,
+  tokens,
+} from "@fluentui/react-components";
+import { AddStarburstFilled } from "@fluentui/react-icons";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { enforceLogin } from "@/oidc";
 import { createFileRoute } from "@tanstack/react-router";
 import { certificateByIdQueryOptions } from "@/api/useCertificate";
+import { Header } from "@/components/header/Header";
 
 export const Route = createFileRoute("/certificate/$id")({
   component: CertificateDetail,
@@ -17,22 +30,39 @@ export function CertificateDetail() {
   const { data } = useSuspenseQuery(certificateByIdQueryOptions(id));
 
   return (
-    <>
-      <Text size={600} weight="semibold" className={styles.title}>
-        {data.name}
-      </Text>
-      <Text size={300} className={styles.description}>
-        {data.description}
-      </Text>
-    </>
+    <Header
+      className={styles.header}
+      title={data.name}
+      description={data.description}
+      action={
+        <Dialog>
+          <DialogTrigger disableButtonEnhancement>
+            <Button appearance="primary" icon={<AddStarburstFilled />}>
+              I have this certificate
+            </Button>
+          </DialogTrigger>
+
+          <DialogSurface>
+            <DialogBody>
+              <DialogTitle>Certificate Dialog (Dummy)</DialogTitle>
+              <DialogContent>
+                This is a placeholder dialog. Ihsan can take over this piece of development.
+              </DialogContent>
+              <DialogActions>
+                <DialogTrigger disableButtonEnhancement>
+                  <Button appearance="secondary">Close</Button>
+                </DialogTrigger>
+              </DialogActions>
+            </DialogBody>
+          </DialogSurface>
+        </Dialog>
+      }
+    />
   );
 }
 
 const useStyles = makeStyles({
-  title: {
-    marginBottom: tokens.spacingVerticalS,
-  },
-  description: {
-    color: tokens.colorNeutralForeground2,
+  header: {
+    marginBottom: tokens.spacingVerticalM,
   },
 });
