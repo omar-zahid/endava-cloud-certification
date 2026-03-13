@@ -114,7 +114,7 @@ export function CertificateDetail() {
 
           <div className={styles.badgeFieldItem}>
             <Text weight="semibold" size={200} className={styles.fieldLabel}>
-              Badge URL
+              Badge
             </Text>
             <div className={styles.badgeImageFrame}>
               <img
