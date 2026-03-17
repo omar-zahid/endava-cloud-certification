@@ -10,12 +10,18 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ProtectedRouteImport } from './routes/protected'
+import { Route as MyCertificationsRouteImport } from './routes/my-certifications'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CertificateIdRouteImport } from './routes/certificate.$id'
 
 const ProtectedRoute = ProtectedRouteImport.update({
   id: '/protected',
   path: '/protected',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MyCertificationsRoute = MyCertificationsRouteImport.update({
+  id: '/my-certifications',
+  path: '/my-certifications',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -31,30 +37,39 @@ const CertificateIdRoute = CertificateIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/my-certifications': typeof MyCertificationsRoute
   '/protected': typeof ProtectedRoute
   '/certificate/$id': typeof CertificateIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/my-certifications': typeof MyCertificationsRoute
   '/protected': typeof ProtectedRoute
   '/certificate/$id': typeof CertificateIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/my-certifications': typeof MyCertificationsRoute
   '/protected': typeof ProtectedRoute
   '/certificate/$id': typeof CertificateIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/protected' | '/certificate/$id'
+  fullPaths: '/' | '/my-certifications' | '/protected' | '/certificate/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/protected' | '/certificate/$id'
-  id: '__root__' | '/' | '/protected' | '/certificate/$id'
+  to: '/' | '/my-certifications' | '/protected' | '/certificate/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/my-certifications'
+    | '/protected'
+    | '/certificate/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  MyCertificationsRoute: typeof MyCertificationsRoute
   ProtectedRoute: typeof ProtectedRoute
   CertificateIdRoute: typeof CertificateIdRoute
 }
@@ -66,6 +81,13 @@ declare module '@tanstack/react-router' {
       path: '/protected'
       fullPath: '/protected'
       preLoaderRoute: typeof ProtectedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/my-certifications': {
+      id: '/my-certifications'
+      path: '/my-certifications'
+      fullPath: '/my-certifications'
+      preLoaderRoute: typeof MyCertificationsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -87,6 +109,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  MyCertificationsRoute: MyCertificationsRoute,
   ProtectedRoute: ProtectedRoute,
   CertificateIdRoute: CertificateIdRoute,
 }

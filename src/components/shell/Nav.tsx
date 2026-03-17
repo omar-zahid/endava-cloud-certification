@@ -10,6 +10,7 @@ import { Certificate20Regular, Shield20Regular } from "@fluentui/react-icons";
 import { linkOptions, useNavigate } from "@tanstack/react-router";
 import logo from "@/assets/endava_symbol_RGB.svg";
 import { Profile } from "./Profile";
+import { Home20Regular } from "node_modules/@fluentui/react-icons/lib/fonts/sizedIcons/chunk-20";
 
 const useStyles = makeStyles({
   brandIcon: {
@@ -26,14 +27,20 @@ export function Nav() {
     {
       id: "1",
       to: "/",
-      label: "Certificates",
-      icon: <Certificate20Regular />,
+      label: "Home",
+      icon: <Home20Regular />,
     },
     {
       id: "2",
       to: "/protected",
       label: "Protected",
       icon: <Shield20Regular />,
+    },
+    {
+      id: "3",
+      to: "/my-certifications",
+      label: "My Certifications",
+      icon: <Certificate20Regular />,
     },
   ]);
   return (
