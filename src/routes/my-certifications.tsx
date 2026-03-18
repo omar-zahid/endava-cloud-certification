@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router"
 import {
   Button,
   createTableColumn,
@@ -10,17 +10,17 @@ import {
   DataGridRow,
   JSXElement,
   makeStyles,
-  mergeClasses,
   TableCellLayout,
   TableColumnDefinition,
   TableColumnSizingOptions,
   Text,
   tokens,
-} from "@fluentui/react-components"
-import { CheckmarkStarburstFilled, OpenFilled } from '@fluentui/react-icons';
-import { CertificateLevel, CertificateVendor } from '@/models/CertificationModel';
+} from "@fluentui/react-components";
+import { CheckmarkStarburstFilled, OpenFilled } from "@fluentui/react-icons";
+import { CertificateLevel, CertificateVendor } from "@/models/CertificationModel";
+import { useEffect, useRef, useState } from "react";
 
-export const Route = createFileRoute('/my-certifications')({
+export const Route = createFileRoute("/my-certifications")({
   component: RouteComponent,
 })
 
@@ -98,9 +98,19 @@ const items: Item[] = [
 ];
 
 function RouteComponent() {
-  const styles = useStyles()
-  const navigate = useNavigate()
-  const calcColumnsPercentage = (percentage: number) => 1652 * (percentage / 100)
+  const styles = useStyles();
+  const navigate = useNavigate();
+
+  // Use a ref to get the container width and set description column to 40% of it
+  const gridContainerRef = useRef<HTMLDivElement>(null);
+  const [descriptionWidth, setDescriptionWidth] = useState(550);
+
+  useEffect(() => {
+    if (gridContainerRef.current) {
+      const width = gridContainerRef.current.offsetWidth;
+      setDescriptionWidth(Math.max(550, Math.floor(width * 0.4)));
+    }
+  }, []);
 
   const columnSizingOptions: TableColumnSizingOptions = {
     name: {
@@ -109,9 +119,9 @@ function RouteComponent() {
       idealWidth: 260,
     },
     description: {
-      defaultWidth: calcColumnsPercentage(50),
-      minWidth: calcColumnsPercentage(50),
-      idealWidth: calcColumnsPercentage(50),
+      defaultWidth: descriptionWidth,
+      minWidth: 550,
+      idealWidth: descriptionWidth,
     },
     level: {
       defaultWidth: 80,
@@ -128,7 +138,7 @@ function RouteComponent() {
       minWidth: 280,
       idealWidth: 280,
     },
-  }
+  };
 
   const columns: TableColumnDefinition<Item>[] = [
     createTableColumn<Item>({
@@ -138,7 +148,7 @@ function RouteComponent() {
       },
       renderCell: (item) => {
         return (
-          <TableCellLayout className={mergeClasses(styles.truncate, item.certificateValidity.isExpired ? styles.expiredIcon : styles.validIcon)}>
+          <TableCellLayout truncate className={item.certificateValidity.isExpired ? styles.expiredIcon : styles.validIcon}>
             {item.name}
           </TableCellLayout>
         );
@@ -151,7 +161,7 @@ function RouteComponent() {
       },
       renderCell: (item) => {
         return (
-          <TableCellLayout className={mergeClasses(styles.truncate, item.certificateValidity.isExpired ? styles.expiredIcon : styles.validIcon)}>
+          <TableCellLayout truncate className={item.certificateValidity.isExpired ? styles.expiredIcon : styles.validIcon}>
             {item.description}
           </TableCellLayout>
         );
@@ -159,6 +169,7 @@ function RouteComponent() {
     }),
     createTableColumn<Item>({
       columnId: "level",
+      compare: (a, b) => a.level.localeCompare(b.level),
       renderHeaderCell: () => {
         return "Level";
       },
@@ -172,6 +183,7 @@ function RouteComponent() {
     }),
     createTableColumn<Item>({
       columnId: "vendor",
+      compare: (a, b) => a.vendor.localeCompare(b.vendor),
       renderHeaderCell: () => {
         return "Vendor";
       },
@@ -185,6 +197,7 @@ function RouteComponent() {
     }),
     createTableColumn<Item>({
       columnId: "certificateValidity",
+      compare: (a, b) => a.certificateValidity.isExpired === b.certificateValidity.isExpired ? 0 : a.certificateValidity.isExpired ? 1 : -1,
       renderHeaderCell: () => {
         return "Certificate Validity";
       },
@@ -217,17 +230,20 @@ function RouteComponent() {
         My Certifications
       </Text>
       <Text className={styles.subtitle}>
-        View your latest certificate collections. If any of your certificates are not listed on this page, please browse<Link className={styles.link} onClick={() => navigate({ to: '/', })} to={undefined}> here</Link>
+        View your latest certificate collections. If any of your certificates are not listed on this page, please browse<Link className={styles.link} onClick={() => navigate({ to: "/", })} to={undefined}> here</Link>
       </Text>
       <DataGrid
         items={items}
+        className={styles.dataGrid}
         columns={columns}
-        sortable
-        resizableColumns
         columnSizingOptions={columnSizingOptions}
         focusMode="composite"
-        style={{ minWidth: "550px" }}
-        className={styles.dataGrid}
+        ref={gridContainerRef}
+        resizableColumns
+        resizableColumnsOptions={{
+          autoFitColumns: false,
+        }}
+        sortable
       >
         <DataGridHeader>
           <DataGridRow>
@@ -262,6 +278,9 @@ const useStyles = makeStyles({
   title: {
     marginBottom: tokens.spacingVerticalM,
   },
+  subtitle: {
+    color: "#5E6A73",
+  },
   link: {
     color: "#E34230",
     cursor: "pointer",
@@ -284,12 +303,6 @@ const useStyles = makeStyles({
   },
   expiredIcon: {
     color: "#A3AAAF",
-  },
-  truncate: {
-    display: "block",
-    whiteSpace: "nowrap",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
   },
   certificateValidityCell: {
     display: "flex",
