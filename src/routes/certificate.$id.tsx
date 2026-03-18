@@ -7,9 +7,12 @@ import {
   DialogSurface,
   DialogTitle,
   DialogTrigger,
+  Field,
+  Input,
   makeStyles,
   tokens,
 } from "@fluentui/react-components";
+import { DatePicker } from "@fluentui/react-datepicker-compat";
 import { AddStarburstFilled } from "@fluentui/react-icons";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { enforceLogin } from "@/oidc";
@@ -43,17 +46,31 @@ export function CertificateDetail() {
           </DialogTrigger>
 
           <DialogSurface>
-            <DialogBody>
-              <DialogTitle>Certificate Dialog (Dummy)</DialogTitle>
-              <DialogContent>
-                This is a placeholder dialog. Ihsan can take over this piece of development.
-              </DialogContent>
-              <DialogActions>
-                <DialogTrigger disableButtonEnhancement>
-                  <Button appearance="secondary">Close</Button>
-                </DialogTrigger>
-              </DialogActions>
-            </DialogBody>
+            <form>
+              <DialogBody>
+                <DialogTitle>Certificate Details</DialogTitle>
+                <DialogContent className={styles.content}>
+                  <Field label="Link" required>
+                    <Input placeholder="Eg. https://www.credly.com/..." type="url" />
+                  </Field>
+                  <Field label="Expiry Date" required>
+                    <DatePicker placeholder="Select a date..." />
+                  </Field>
+                </DialogContent>
+                <DialogActions className={styles.actionsContainer}>
+                  <DialogTrigger disableButtonEnhancement>
+                    <Button appearance="primary" className={styles.triggerButton}>
+                      Add
+                    </Button>
+                  </DialogTrigger>
+                  <DialogTrigger disableButtonEnhancement>
+                    <Button appearance="secondary" className={styles.triggerButton}>
+                      Cancel
+                    </Button>
+                  </DialogTrigger>
+                </DialogActions>
+              </DialogBody>
+            </form>
           </DialogSurface>
         </Dialog>
       }
@@ -62,7 +79,22 @@ export function CertificateDetail() {
 }
 
 const useStyles = makeStyles({
+  actionsContainer: {
+    display: "flex",
+    justifyContent: "space-around",
+    width: "100%",
+    marginTop: tokens.spacingVerticalS,
+    gridColumnStart: 1,
+  },
+  content: {
+    display: "flex",
+    flexDirection: "column",
+    gap: tokens.spacingVerticalMNudge,
+  },
   header: {
     marginBottom: tokens.spacingVerticalM,
+  },
+  triggerButton: {
+    flexGrow: 1,
   },
 });
