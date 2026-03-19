@@ -7,16 +7,86 @@ import {
   DialogSurface,
   DialogTitle,
   DialogTrigger,
+  JSXElement,
   Text,
   makeStyles,
   tokens,
 } from "@fluentui/react-components";
-import { AddStarburstFilled, OpenRegular } from "@fluentui/react-icons";
+import { AddStarburstFilled, CheckmarkStarburstFilled } from "@fluentui/react-icons";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { enforceLogin } from "@/oidc";
 import { createFileRoute } from "@tanstack/react-router";
 import { certificateByIdQueryOptions } from "@/api/useCertificate";
 import { Header } from "@/components/header/Header";
+import { UserDataGrid } from "@/components/certifiedUser/UserDataGrid";
+import { Grid20Regular } from "node_modules/@fluentui/react-icons/lib/fonts/sizedIcons/chunk-20";
+import { ListBar20Regular } from "node_modules/@fluentui/react-icons/lib/fonts/sizedIcons/chunk-32";
+import { UserCard } from "@/components/certifiedUser/UserCard";
+import { useState } from "react";
+
+/* ==== Dummy data - to be replaced when BE is ready ==== */
+export type Item = {
+  name: string;
+  role: string;
+  email: string;
+  certificateValidity: {
+    isExpired: boolean;
+    icon: JSXElement;
+    url: string;
+  };
+};
+
+const items: Item[] = [
+  {
+    name: "Alice Johnson",
+    role: "Frontend Developer",
+    email: "alice.johnson@endava.com",
+    certificateValidity: { isExpired: false, icon: <CheckmarkStarburstFilled />, url: "https://learn.microsoft.com/en-us/certifications/azure-ai-engineer/" },
+  },
+  {
+    name: "Bob Smith",
+    role: "Backend Developer",
+    email: "bob.smith@endava.com",
+    certificateValidity: { isExpired: true, icon: <CheckmarkStarburstFilled />, url: "https://learn.microsoft.com/en-us/certifications/azure-ai-engineer/" },
+  },
+  {
+    name: "Charlie Brown",
+    role: "UI/UX Designer",
+    email: "charlie.brown@endava.com",
+    certificateValidity: { isExpired: false, icon: <CheckmarkStarburstFilled />, url: "https://learn.microsoft.com/en-us/certifications/azure-ai-engineer/" },
+  },
+  {
+    name: "David Wilson",
+    role: "DevOps Engineer",
+    email: "david.wilson@endava.com",
+    certificateValidity: { isExpired: true, icon: <CheckmarkStarburstFilled />, url: "https://learn.microsoft.com/en-us/certifications/azure-ai-engineer/" },
+  },
+  {
+    name: "Eve Adams",
+    role: "AI Engineer",
+    email: "eve.adams@endava.com",
+    certificateValidity: { isExpired: false, icon: <CheckmarkStarburstFilled />, url: "https://learn.microsoft.com/en-us/certifications/azure-ai-engineer/" },
+  },
+  {
+    name: "Frank Miller",
+    role: "Solutions Architect",
+    email: "frank.miller@endava.com",
+    certificateValidity: { isExpired: true, icon: <CheckmarkStarburstFilled />, url: "https://learn.microsoft.com/en-us/certifications/azure-ai-engineer/" },
+  },
+  {
+    name: "Grace Lee",
+    role: "Machine Learning Engineer",
+    email: "grace.lee@endava.com",
+    certificateValidity: { isExpired: false, icon: <CheckmarkStarburstFilled />, url: "https://learn.microsoft.com/en-us/certifications/azure-ai-engineer/" },
+  },
+  {
+    name: "Henry Thompson",
+    role: "Senior Developer",
+    email: "henry.thompson@endava.com",
+    certificateValidity: { isExpired: false, icon: <CheckmarkStarburstFilled />, url: "https://learn.microsoft.com/en-us/certifications/azure-developer-associate/" },
+  },
+];
+/* ==== End of dummy data ==== */
 
 export const Route = createFileRoute("/certificate/$id")({
   component: CertificateDetail,
@@ -29,6 +99,7 @@ export function CertificateDetail() {
   const styles = useStyles();
   const { id } = Route.useParams();
   const { data } = useSuspenseQuery(certificateByIdQueryOptions(id));
+  const [isCardMode, setIsCardMode] = useState(true);
 
   return (
     <>
@@ -61,85 +132,20 @@ export function CertificateDetail() {
         }
       />
 
-      <section className={styles.infoContainer}>
-        <div className={styles.fieldsWrapper}>
-          <div className={styles.fieldsGrid}>
-            <div className={styles.fieldItem}>
-              <Text weight="semibold" size={200} className={styles.fieldLabel}>
-                Category
-              </Text>
-              <Text size={400} weight="medium" className={styles.fieldValueWrap}>
-                Certificate
-              </Text>
-            </div>
-
-            <div className={styles.fieldItem}>
-              <Text weight="semibold" size={200} className={styles.fieldLabel}>
-                Vendor
-              </Text>
-              <Text size={400} weight="medium" className={styles.fieldValueWrap}>
-                {data.vendor}
-              </Text>
-            </div>
-
-            <div className={styles.fieldItem}>
-              <Text weight="semibold" size={200} className={styles.fieldLabel}>
-                Subject
-              </Text>
-              <Text size={400} weight="medium" className={styles.fieldValueWrap}>
-                {data.subject}
-              </Text>
-            </div>
-
-            <div className={styles.fieldItem}>
-              <Text weight="semibold" size={200} className={styles.fieldLabel}>
-                Level
-              </Text>
-              <Text size={400} weight="medium" className={styles.fieldValueWrap}>
-                {data.level}
-              </Text>
-            </div>
-
-            <div className={styles.fieldItem}>
-              <Text weight="semibold" size={200} className={styles.fieldLabel}>
-                Role
-              </Text>
-              <Text size={400} weight="medium" className={styles.fieldValueWrap}>
-                {data.role}
-              </Text>
-            </div>
-          </div>
-
-          <div className={styles.separator} />
-
-          <div className={styles.badgeFieldItem}>
-            <Text weight="semibold" size={200} className={styles.fieldLabel}>
-              Badge
+      <div>
+        <div className={styles.viewModeRoot}>
+          <div className={styles.viewModeTitle}>
+            <Text size={600} weight="semibold">
+              Certified Users
             </Text>
-            <div className={styles.badgeImageFrame}>
-              <img
-                src={data.badgeUrl}
-                alt={`${data.name} badge`}
-                className={styles.badgeImage}
-              />
-            </div>
+          </div>
+          <div className={styles.viewModeToggle}>
+            <Button icon={<Grid20Regular />} onClick={() => setIsCardMode(true)} className={isCardMode ? styles.activeViewModeButton : undefined} />
+            <Button icon={<ListBar20Regular />} onClick={() => setIsCardMode(false)} className={!isCardMode ? styles.activeViewModeButton : undefined} />
           </div>
         </div>
-
-        <div className={styles.actionsRow}>
-          <Button
-            as="a"
-            href={data.externalLink}
-            target="_blank"
-            rel="noreferrer"
-            appearance="primary"
-            icon={<OpenRegular />}
-            className={styles.externalLinkButton}
-          >
-            View Certificate
-          </Button>
-        </div>
-      </section>
+        {isCardMode ? <UserCard items={items} /> : <UserDataGrid items={items} />}
+      </div>
     </>
   );
 }
@@ -232,5 +238,35 @@ const useStyles = makeStyles({
   },
   externalLinkButton: {
     minWidth: "180px",
+  },
+  viewModeRoot: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    paddingTop: tokens.spacingVerticalXXL,
+    paddingBottom: tokens.spacingVerticalXXL,
+    paddingLeft: tokens.spacingHorizontalXXL,
+    paddingRight: tokens.spacingHorizontalXXL,
+  },
+  viewModeTitle: {
+    flex: 1,
+  },
+  viewModeToggle: {
+    display: "flex",
+    flex: 0,
+    columnGap: tokens.spacingVerticalS,
+    "& Button": {
+      fontWeight: "var(--fontWeightRegular)",
+    },
+  },
+  activeViewModeButton: {
+    color: tokens.colorBrandForeground2,
+    backgroundColor: "rgba(255, 86, 64, 0.15)",
+    border: `1px solid ${tokens.colorBrandForeground2}`,
+    "&:hover": {
+      color: tokens.colorBrandForeground2,
+      backgroundColor: "rgba(255, 86, 64, 0.15)",
+      border: `1px solid ${tokens.colorBrandForeground2}`,
+    },
   },
 });
